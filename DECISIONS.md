@@ -18,3 +18,4 @@
 16. **Clients write audit rows only via `log_event()`** (actor forced to `auth.uid()`); `audit_log` has no client insert policy.
 17. **`owner_id`/`org_id` on households can't be changed by clients** (column-level grants); sponsor-linked households arrive in Slice 6 via the white-label link.
 18. Turned off Next `cacheComponents`: auth-gated dynamic pages don't benefit and it broke prerendering.
+19. **No `proxy.ts` for now.** Netlify CLI 23.6 on Node 24 fails to bundle Next 16's Node-runtime proxy as an edge function (Deno `findSourceMap` error). Without it Supabase session cookies aren't refreshed on page loads, so a signed-in user is sent back to `/login` after the access token expires (~1h). Re-add the proxy (it's in git history, commit "Slice 2") once deploys run from Netlify's own build or the CLI is fixed.
