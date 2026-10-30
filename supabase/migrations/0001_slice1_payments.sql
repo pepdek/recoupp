@@ -1,0 +1,3 @@
+-- Applied to project lqxbxhjzyhwqknwmirmx via MCP as "slice1_payments" then "slice1_harden_functions".
+-- Tables: organizations, profiles, payments, stripe_events, audit_log (append-only trigger), RLS on all.
+-- Re-derive full SQL from `supabase db pull` before relying on this file for fresh environments.
