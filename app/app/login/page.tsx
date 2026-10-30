@@ -8,7 +8,7 @@ export default function Login() {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get("email") as string;
     const sb = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-    await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` } });
+    await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(new URLSearchParams(location.search).get("next") ?? "/")}` } });
     setSent(true);
   }
   return (

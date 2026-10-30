@@ -13,3 +13,8 @@
 11. **Analytics:** own `events` table (funnel + kill criteria), no third-party tracker, so no PII leaves the stack.
 12. **Home market first:** Pierce County property-tax and Tacoma Public Utilities rules go first among local programs.
 13. **Unverified = hidden:** any program with `confidence: needs_review` runs through the reviewer queue and is never auto-shown.
+14. **Intake = one topic per screen** (income/bills have several fields on one screen) rather than strictly one field per screen; keeps the flow to ~10 screens. Revisit if drop-off data says otherwise.
+15. **Consents** are insert-only (updates blocked); revoking/changing = new row. They are deleted with the household on a delete request; the deletion itself is kept in `audit_log` (no PII, just ids).
+16. **Clients write audit rows only via `log_event()`** (actor forced to `auth.uid()`); `audit_log` has no client insert policy.
+17. **`owner_id`/`org_id` on households can't be changed by clients** (column-level grants); sponsor-linked households arrive in Slice 6 via the white-label link.
+18. Turned off Next `cacheComponents`: auth-gated dynamic pages don't benefit and it broke prerendering.

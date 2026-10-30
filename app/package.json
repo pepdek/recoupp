@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:rls": "node --env-file=.env.local node_modules/vitest/vitest.mjs run tests/rls.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
