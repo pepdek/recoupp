@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:rls": "node --env-file=.env.local node_modules/vitest/vitest.mjs run tests/rls.test.ts"
+    "test:rls": "node --env-file=.env.local node_modules/vitest/vitest.mjs run tests/rls.test.ts",
+    "prebuild": "tsx scripts/build-programs.ts",
+    "pretest": "tsx scripts/build-programs.ts",
+    "plan": "tsx scripts/plan.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -17,6 +20,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "stripe": "^23.1.0",
+    "yaml": "^2.9.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {

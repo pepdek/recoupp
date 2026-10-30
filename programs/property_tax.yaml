@@ -1,0 +1,41 @@
+id: property_tax
+name: Senior / disabled property tax exemption (Pierce County first)
+agency: County Assessor-Treasurer; WA Department of Revenue
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://app.leg.wa.gov/RCW/default.aspx?cite=84.36.381   # age, ownership, residence rules verified; income thresholds are set by county and not in the statute text we read
+  - https://www.piercecountywa.gov/702/Senior-Citizens-Or-People-with-Disabilit   # returned 403 to our fetcher; Pierce income tiers NOT verified
+unverified_inputs:
+  - county_income_thresholds   # county-specific; law amended for taxes collected in 2027+ (2025 c 200, 2026 c 163)
+  - dollar_value
+renewal: Renew at least every 6 years or on county request (Pierce staggers by last name)
+documents:
+  - Proof of age or disability
+  - Proof of last year's income (tax return or benefit letters)
+  - Deed or proof of ownership
+application:
+  channel: County Assessor-Treasurer office (Pierce County application)
+  url: https://www.piercecountywa.gov/702/Senior-Citizens-Or-People-with-Disabilit
+rules:
+  - id: already
+    when: { fact: has_property_tax }
+    status: already_receiving
+    reason: You told us you already get a senior property tax exemption.
+  - id: not_owner
+    when: { cmp: ["!=", { fact: tenure }, "own"] }
+    status: unlikely
+    reason: This exemption is for homeowners who live in the home as their main residence (RCW 84.36.381). You said you do not own your home.
+  - id: age_ok
+    when: { fact: any_61plus_certain }
+    status: needs_human_review
+    reason: You own your home and someone is 61 or older, which meets the age and ownership rules. The income limit depends on your county and we have not verified it yet, so a reviewer must check.
+  - id: age_or_disability_unclear
+    when: { any: [{ fact: any_61plus_possible }, { fact: any_disabled }, { fact: any_veteran }] }
+    status: needs_human_review
+    reason: You own your home. Age 61 depends on a birthday, or a disability or VA rating may qualify. A reviewer must confirm and check the county income limit.
+  - id: too_young
+    when: true
+    status: unlikely
+    reason: The exemption needs someone 61 or older, retired due to disability, or with a qualifying VA rating (RCW 84.36.381).

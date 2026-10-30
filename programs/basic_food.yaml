@@ -1,0 +1,76 @@
+id: basic_food
+name: Basic Food (SNAP food assistance)
+agency: WA Department of Social and Health Services (DSHS)
+jurisdiction: WA
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://app.leg.wa.gov/WAC/default.aspx?cite=388-478-0060   # table "effective 10/1/2025", amended WSR 26-02-071 eff 2/7/26; read 2026-10-30
+  - https://www.dshs.wa.gov/esa/community-services-offices/basic-food   # how to apply
+unverified_inputs:
+  - net_income_deductions   # standard, medical and shelter deductions not verified; engine compares GROSS income and sends the gap to a reviewer
+  - benefit_reduction_rate  # 30% of net income (7 CFR 273.10(e)); not fetched this pass
+  - screening_ceiling       # the 2x net-limit ceiling for "unlikely" is a screening heuristic, not a rule
+renewal: Certification period set by DSHS (typically 12 to 36 months for elderly/disabled); interim and mid-certification reviews apply
+documents:
+  - Photo ID
+  - Proof of income (Social Security letter, pension statement)
+  - Proof of rent or mortgage and utility bills
+  - Medical expense receipts (elderly/disabled households)
+application:
+  channel: Washington Connection online, phone 877-501-2233, or a DSHS Community Services Office
+  url: https://www.washingtonconnection.org
+constants:
+  benefit_reduction_rate: 0.30
+  screening_ceiling_multiple: 2
+tables:
+  max_gross_130: { "1": 1696, "2": 2292, "3": 2888, "4": 3483, "5": 4079, "6": 4675, "7": 5271, "8": 5867, each_additional: 596 }
+  max_net_100: { "1": 1305, "2": 1763, "3": 2221, "4": 2680, "5": 3138, "6": 3596, "7": 4055, "8": 4513, each_additional: 459 }
+  max_allotment: { "1": 298, "2": 546, "3": 785, "4": 994, "5": 1183, "6": 1421, "7": 1571, "8": 1789, each_additional: 218 }
+derived:
+  net_limit: { table: max_net_100, size: { fact: hh_size } }
+  gross_limit: { table: max_gross_130, size: { fact: hh_size } }
+  max_benefit: { table: max_allotment, size: { fact: hh_size } }
+  ceiling: { op: mul, args: [{ fact: net_limit }, { const: screening_ceiling_multiple }] }
+  monthly_low: { op: max, args: [0, { op: sub, args: [{ fact: max_benefit }, { op: mul, args: [{ const: benefit_reduction_rate }, { fact: income_monthly }] }] }] }
+  monthly_likely: { op: div, args: [{ op: add, args: [{ fact: monthly_low }, { fact: max_benefit }] }, 2] }
+  annual_low: { op: mul, args: [{ fact: monthly_low }, 12] }
+  annual_likely: { op: mul, args: [{ fact: monthly_likely }, 12] }
+  annual_high: { op: mul, args: [{ fact: max_benefit }, 12] }
+rules:
+  - id: already
+    when: { fact: has_basic_food }
+    status: already_receiving
+    reason: You told us you already get Basic Food.
+  - id: zero_income
+    when: { cmp: ["==", { fact: income_monthly }, 0] }
+    status: eligible
+    reason: "Households with no income get the full maximum benefit, {$max_benefit} a month for {hh_size} people (WAC 388-478-0060)."
+    value: { low: { fact: annual_high }, likely: { fact: annual_high }, high: { fact: annual_high } }
+  - id: elderly_certain_pass
+    when: { all: [{ fact: any_60plus_certain }, { cmp: ["<=", { fact: income_monthly }, { fact: net_limit }] }] }
+    status: eligible
+    reason: "A member is 60 or older, so only the net-income limit applies. Monthly income {$income_monthly} is already under the limit of {$net_limit} before any deductions."
+    value: { low: { fact: annual_low }, likely: { fact: annual_likely }, high: { fact: annual_high } }
+  - id: disabled_pass
+    when: { all: [{ fact: any_disabled }, { cmp: ["<=", { fact: income_monthly }, { fact: net_limit }] }] }
+    status: eligible
+    reason: "A member has a disability, so only the net-income limit applies. Monthly income {$income_monthly} is already under the limit of {$net_limit} before any deductions."
+    value: { low: { fact: annual_low }, likely: { fact: annual_likely }, high: { fact: annual_high } }
+  - id: elderly_deductions
+    when: { all: [{ any: [{ fact: any_60plus_certain }, { fact: any_disabled }] }, { cmp: ["<=", { fact: income_monthly }, { fact: ceiling }] }] }
+    status: needs_human_review
+    reason: "Monthly income {$income_monthly} is over the net limit of {$net_limit}, but net income is income minus deductions (medical costs, shelter, standard deduction). A reviewer must calculate it."
+    value: { low: { fact: annual_low }, likely: { fact: annual_likely }, high: { fact: annual_high } }
+  - id: age_unclear
+    when: { all: [{ fact: any_60plus_possible }, { cmp: ["<=", { fact: income_monthly }, { fact: ceiling }] }] }
+    status: needs_human_review
+    reason: Someone may turn 60 this year; whether the senior rules apply depends on their birthday, so a reviewer must confirm.
+  - id: under_age_pass
+    when: { cmp: ["<=", { fact: income_monthly }, { fact: gross_limit }] }
+    status: needs_human_review
+    reason: "No member is clearly 60 or older or disabled. Monthly income {$income_monthly} is under the gross limit of {$gross_limit}, but a reviewer must calculate net income."
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Monthly income {$income_monthly} is too high for Basic Food for {hh_size} people even after allowing for deductions."

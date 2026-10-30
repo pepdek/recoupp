@@ -1,0 +1,34 @@
+id: apple_health
+name: Apple Health (Medicaid) for aged, blind, or disabled adults
+agency: WA Health Care Authority (HCA)
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://app.leg.wa.gov/WAC/default.aspx?cite=182-512-0050   # who counts as aged/blind/disabled; says SSI methods apply, gives NO dollar limits
+  - https://www.hca.wa.gov/free-or-low-cost-health-care/i-help-others-apply-and-access-apple-health/program-standard-income-and-resources   # dollar limits live here; could not be read
+unverified_inputs:
+  - income_limit
+  - resource_limit
+  - dollar_value
+renewal: Annual redetermination by HCA
+documents:
+  - Proof of income and bank balances
+  - Medicare card, if any
+  - Photo ID and proof of residency
+application:
+  channel: Washington Healthplanfinder or HCA, phone 1-855-923-4633
+  url: https://www.wahealthplanfinder.org
+rules:
+  - id: already
+    when: { fact: has_apple_health }
+    status: already_receiving
+    reason: You told us you already have Apple Health.
+  - id: has_medicaid
+    when: { cmp: ["==", { fact: medicaid }, "yes"] }
+    status: already_receiving
+    reason: You said someone already has Apple Health.
+  - id: review
+    when: true
+    status: needs_human_review
+    reason: Apple Health for older or disabled adults uses SSI-style income and savings rules. We have not yet verified the 2026 dollar limits, so a reviewer must decide.

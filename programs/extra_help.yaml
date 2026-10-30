@@ -1,0 +1,72 @@
+id: extra_help
+name: Extra Help with Medicare drug costs (Part D Low-Income Subsidy)
+agency: Social Security Administration (SSA) / CMS
+jurisdiction: US
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://www.medicare.gov/basics/costs/help/drug-costs   # 2026 limits and automatic-qualification list, read 2026-10-30
+  - https://www.ssa.gov/medicare/part-d-extra-help   # SSA page returned 403 to our fetcher; human to cross-check
+unverified_inputs:
+  - dollar_value   # value of Extra Help depends on plan and drugs; no verified formula, so no dollar estimate is shown
+renewal: Annual review by SSA; automatic if still on MSP, SSI or full Medicaid
+documents:
+  - Medicare card
+  - Proof of income and bank balances (only if applying directly)
+application:
+  channel: Online with SSA, phone 1-800-772-1213. People on a Medicare Savings Program, SSI or full Medicaid are enrolled automatically.
+  url: https://www.ssa.gov/medicare/part-d-extra-help
+depends_on: [msp]
+constants:
+  burial_exclusion_per_person: 1500   # used ONLY to widen into human review, never to approve
+  income_exclusion_annual: 240        # $20/month general exclusion, same use
+tables:
+  income_limit_2026: { "1": 23940, "2": 32460 }
+  resource_limit_2026: { "1": 18090, "2": 36100 }
+derived:
+  income_limit: { table: income_limit_2026, size: { fact: unit_size } }
+  resource_limit: { table: resource_limit_2026, size: { fact: unit_size } }
+  income_gap: { op: sub, args: [{ fact: income_annual }, { fact: income_limit }] }
+  asset_gap: { op: sub, args: [{ fact: assets }, { fact: resource_limit }] }
+  asset_review_band: { op: mul, args: [{ const: burial_exclusion_per_person }, { fact: unit_size }] }
+rules:
+  - id: already
+    when: { fact: has_extra_help }
+    status: already_receiving
+    reason: You told us you already get Extra Help.
+  - id: no_medicare
+    when: { cmp: ["==", { fact: medicare }, "no"] }
+    status: unlikely
+    reason: Extra Help requires Medicare. You said no one has Medicare.
+  - id: medicare_unsure
+    when: { cmp: ["==", { fact: medicare }, "unsure"] }
+    status: needs_human_review
+    reason: We need to confirm whether anyone has Medicare before checking Extra Help.
+  - id: auto_ssi
+    when: { fact: has_ssi }
+    status: eligible
+    reason: People who receive SSI are enrolled in Extra Help automatically (medicare.gov).
+  - id: auto_msp
+    when: { cmp: ["==", { fact: status_msp }, "eligible"] }
+    status: eligible
+    reason: People who get help paying Part B premiums through a Medicare Savings Program are enrolled in Extra Help automatically (medicare.gov). We found you likely qualify for a Medicare Savings Program.
+  - id: auto_msp_likely
+    when: { cmp: ["==", { fact: status_msp }, "likely"] }
+    status: likely
+    reason: People on a Medicare Savings Program are enrolled in Extra Help automatically (medicare.gov). You likely qualify for the QI program, which has limited funding.
+  - id: unit_unclear
+    when: { fact: unit_ambiguous }
+    status: needs_human_review
+    reason: More than two people live in the household, so a reviewer must decide whose income and savings count.
+  - id: within
+    when: { all: [{ cmp: ["<=", { fact: income_annual }, { fact: income_limit }] }, { cmp: ["<=", { fact: assets }, { fact: resource_limit }] }] }
+    status: eligible
+    reason: "Yearly income {$income_annual} is under the 2026 limit of {$income_limit} and savings {$assets} are under {$resource_limit}."
+  - id: near
+    when: { all: [{ cmp: ["<=", { fact: income_gap }, { const: income_exclusion_annual }] }, { cmp: ["<=", { fact: asset_gap }, { fact: asset_review_band }] }] }
+    status: needs_human_review
+    reason: "Income {$income_annual} (limit {$income_limit}) or savings {$assets} (limit {$resource_limit}) are just over the limit. Small exclusions may bring them under, so a reviewer must check."
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Yearly income {$income_annual} or savings {$assets} is over the 2026 limits ({$income_limit} income, {$resource_limit} savings)."

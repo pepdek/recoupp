@@ -1,0 +1,81 @@
+id: msp
+name: Medicare Savings Program (QMB / SLMB / QI)
+agency: WA Health Care Authority (HCA)
+jurisdiction: WA
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://app.leg.wa.gov/WAC/default.aspx?cite=182-517-0100   # tiers (% FPL) and "no resource test", read 2026-10-30
+  - https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines   # 2026 FPL, read 2026-10-30
+  - https://www.hca.wa.gov/free-or-low-cost-health-care/i-help-others-apply-and-access-apple-health/program-standard-income-and-resources   # HCA dollar table: page too large to read via our fetcher; human to confirm dollar limits match FPL math
+unverified_inputs:
+  - part_b_premium_monthly   # $202.90 for 2026 seen only in secondary sources; confirm at cms.gov
+renewal: Annual redetermination by HCA
+documents:
+  - Medicare card (red, white and blue)
+  - Proof of all monthly income (Social Security award letter, pension statements)
+  - Photo ID
+application:
+  channel: Washington Connection online, phone 1-855-923-4633, or HCA paper form
+  url: https://www.washingtonconnection.org
+constants:
+  part_b_premium_monthly: 202.90
+  income_exclusion_monthly: 20      # SSI-style general exclusion; used ONLY to widen into human review, never to approve
+tables:
+  fpl_2026:
+    "1": 15960
+    "2": 21640
+    each_additional: 5680
+derived:
+  fpl_annual: { table: fpl_2026, size: { fact: unit_size } }
+  qmb_limit: { op: div, args: [{ op: mul, args: [{ fact: fpl_annual }, 1.10] }, 12] }
+  slmb_limit: { op: div, args: [{ op: mul, args: [{ fact: fpl_annual }, 1.20] }, 12] }
+  qi_limit: { op: div, args: [{ op: mul, args: [{ fact: fpl_annual }, 1.38] }, 12] }
+  premium_annual: { op: mul, args: [{ const: part_b_premium_monthly }, 12] }
+  # earned income exclusions are not modeled; judge on unearned income when wages exist
+  test_income: { fact: income_monthly }
+  unearned_income: { fact: income_unearned_monthly }
+rules:
+  - id: already
+    when: { fact: has_msp }
+    status: already_receiving
+    reason: You told us you already get a Medicare Savings Program.
+  - id: no_medicare
+    when: { cmp: ["==", { fact: medicare }, "no"] }
+    status: unlikely
+    reason: Medicare Savings Programs require Medicare Part A (WAC 182-517-0100). You said no one has Medicare.
+  - id: medicare_unsure
+    when: { cmp: ["==", { fact: medicare }, "unsure"] }
+    status: needs_human_review
+    reason: We need to confirm whether anyone has Medicare Part A before checking income.
+  - id: unit_unclear
+    when: { fact: unit_ambiguous }
+    status: needs_human_review
+    reason: More than two people live in the household, so a reviewer must decide whose income counts for the Medicare Savings Program.
+  - id: qmb
+    when: { cmp: ["<=", { fact: test_income }, { fact: qmb_limit }] }
+    status: eligible
+    reason: "Monthly income {$test_income} is at or below the QMB limit of {$qmb_limit} (110% of the 2026 poverty level for a household of {unit_size}). QMB pays your Part B premium."
+    value: { low: { fact: premium_annual }, likely: { fact: premium_annual }, high: { fact: premium_annual } }
+  - id: slmb
+    when: { cmp: ["<=", { fact: test_income }, { fact: slmb_limit }] }
+    status: eligible
+    reason: "Monthly income {$test_income} is above QMB but within the SLMB limit of {$slmb_limit} (120% of the poverty level). SLMB pays your Part B premium."
+    value: { low: { fact: premium_annual }, likely: { fact: premium_annual }, high: { fact: premium_annual } }
+  - id: qi
+    when: { cmp: ["<=", { fact: test_income }, { fact: qi_limit }] }
+    status: likely
+    reason: "Monthly income {$test_income} is within the QI limit of {$qi_limit} (138% of the poverty level). QI funding is limited and first-come, so approval is not certain."
+    value: { low: { fact: premium_annual }, likely: { fact: premium_annual }, high: { fact: premium_annual } }
+  - id: near_limit
+    when: { cmp: ["<=", { op: sub, args: [{ fact: test_income }, { const: income_exclusion_monthly }] }, { fact: qi_limit }] }
+    status: needs_human_review
+    reason: "Monthly income {$test_income} is within $20 of the {$qi_limit} limit. Small income exclusions may bring it under, so a reviewer must check."
+  - id: wages
+    when: { all: [{ cmp: [">", { fact: wages_monthly }, 0] }, { cmp: ["<=", { fact: unearned_income }, { fact: qi_limit }] }] }
+    status: needs_human_review
+    reason: Total income is over the limit, but part of it is wages. Earned-income exclusions can lower countable income, so a reviewer must check.
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Monthly income {$test_income} is above the highest limit of {$qi_limit} (138% of the poverty level for a household of {unit_size})."
