@@ -70,7 +70,7 @@ export default function Home() {
 
       {/* 3. Sample */}
       <section id="sample" className="wrap mt-20 scroll-mt-20 md:mt-28" aria-labelledby="sample-h">
-        <div className="glass pad grid gap-8 md:grid-cols-[1fr_1.5fr]">
+        <div className="glass glass-sage pad grid gap-8 md:grid-cols-[1fr_1.5fr]">
           <div>
             <h2 id="sample-h">What a result looks like</h2>
             <p className="mt-3">This is a made-up household, to show the layout. The people and numbers are not real.</p>
@@ -99,7 +99,7 @@ export default function Home() {
 
       {/* 4. Guarantee */}
       <section className="wrap mt-20 md:mt-28" aria-labelledby="g">
-        <div className="glass pad mx-auto max-w-3xl" data-light>
+        <div className="glass glass-warm pad mx-auto max-w-3xl" data-light>
           <p className="small flex items-center gap-2 font-bold"><Icon name="shield" size={20} />The terms, in plain words</p>
           <h2 id="g" className="mt-2">Find under $1,000 a year? You pay <em>nothing</em>.</h2>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -148,7 +148,7 @@ export default function Home() {
 
       {/* 7. Sponsors */}
       <section className="wrap mt-20 md:mt-28">
-        <div className="glass pad flex flex-wrap items-center justify-between gap-4">
+        <div className="glass glass-warm pad flex flex-wrap items-center justify-between gap-4">
           <div><h3>Run a group that serves older adults?</h3><p className="small mt-1">Give your members this at no cost to them. It comes with a recovered-income guarantee.</p></div>
           <a className="btn btn-quiet" href="/for-sponsors">See the pilot</a>
         </div>

@@ -6,7 +6,7 @@ const L = (h: string) => { const [r, g, b] = rgb(h).map(lin); return 0.2126 * r 
 const cr = (a: string, b: string) => { const [x, y] = [L(a), L(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const over = (fg: string, bg: string, a: number) => "#" + rgb(fg).map((v, i) => Math.round(a * v + (1 - a) * rgb(bg)[i]).toString(16).padStart(2, "0")).join("");
 
-const field = { peach: "#ffd3b0", apricot: "#ffb27a", marigold: "#f4b93e", clay: "#d98b7a", sage: "#a9bfa0", sky: "#bfd9e8", teal: "#1f5f63", base: "#fff3e6" };
+const field = { peach: "#ffc79a", apricot: "#ff9a52", marigold: "#f9b21c", clay: "#d4705f", sage: "#8fb08a", sky: "#8ec5e8", ember: "#ff6e3c", teal: "#1f5f63", base: "#fff3e6" };
 const text = { ink: "#1b1714", "ink-2": "#4a3f38", money: "#0a4526", wait: "#5e3800", bad: "#80190f", link: "#7f2605" };
 let fail = 0;
 for (const [fn, fh] of Object.entries(field)) {
@@ -14,8 +14,10 @@ for (const [fn, fh] of Object.entries(field)) {
   const row = Object.entries(text).map(([tn, th]) => { const r = cr(th, surface); if (r < 7) fail++; return `${tn} ${r.toFixed(1)}`; });
   console.log(`${fn.padEnd(9)} ${surface}  ${row.join("  ")}`);
 }
+const tints = [["warm", "#fff6ea"], ["sage", "#f4faf2"]].flatMap(([n, t]) => Object.entries(text).map(([tn, th]) => { const r = cr(th, over(t, field.teal, 0.88)); if (r < 7) fail++; return `${n}/${tn} ${r.toFixed(1)}`; }));
+console.log(`tinted panes over teal: ${tints.join("  ")}`);
 const btn = ["#ff8a5b", "#ffb04a"].map((b) => cr("#1b1714", b).toFixed(1));
 console.log(`button ink on gradient: ${btn.join(" / ")}`);
-const num = Object.entries(field).filter(([n]) => n !== "teal").map(([n, h]) => `${n} ${cr("#7f2605", h).toFixed(1)}`);
-console.log(`hero numeral (#7f2605, large text needs 3) on field: ${num.join("  ")}`);
+const num = Object.entries(field).filter(([n]) => n !== "teal").map(([n, h]) => `${n} ${cr("#5c1b04", h).toFixed(1)}`);
+console.log(`hero numeral (#5c1b04, large text needs 3) on field: ${num.join("  ")}`);
 if (fail) { console.error(`${fail} pairs under 7:1`); process.exit(1); }

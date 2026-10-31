@@ -4,10 +4,9 @@ v1 (paper and stamps): https://v1--recoup-founder-app.netlify.app
 v2 (this branch): alias `v2`, see the deploy URL in the chat.
 
 ## Worst-case contrast (`npx tsx scripts/contrast-v2.ts`, exits 1 if any text pair is under 7:1)
-Text tokens on the 86% white pane composited over each field color. The darkest case (deep teal) gives surface `#E0E9E9`:
-ink 14.4, ink-2 8.3, money green 9.0, waiting amber 8.3, problem red 8.2, link 7.8. Every other field color is higher. Button ink on the coral-to-marigold gradient: 7.7 and 9.8. The hero numeral (`#7F2605`, large text, needs 3:1) is 5.4 to 8.8 on every field color except clay, where it is 3.6. That is AA for large text, not AAA; the same figure appears again in the balance card at 9+.
+Color pass 2 made the field richer (apricot `#FF9A52`, marigold `#F9B21C`, clay `#D4705F`, sage `#8FB08A`, sky `#8EC5E8`, plus an ember glow). Text tokens on the 86% white pane over each field color: the darkest case (deep teal, surface `#E0E9E9`) gives ink 14.4, ink-2 8.3, money green 9.0, waiting amber 8.3, problem red 8.2, link 7.8. Every other field color is higher. The tinted warm and sage panes (88% fill) are checked over teal too: lowest is link at 7.5. Button ink on the coral-to-marigold gradient: 7.7 and 9.8. The hero numeral is now `#5C1B04` (large text, needs 3:1): 4.0 to 11.9 on every field color. The weakest is clay at 3.9 (AA large). The figure also appears in the balance card at 9+.
 
-## Lighthouse (production build, mobile profile, headless Chrome)
+## Lighthouse (production build, run before color pass 2; not rerun, mobile profile, headless Chrome)
 | Page | Performance | Accessibility | Best practices | LCP | CLS |
 |---|---|---|---|---|---|
 | `/` | 100 | 100 | 100 | 0.8s | 0 |
@@ -32,4 +31,4 @@ Lighthouse's accessibility score runs axe-core rules. This is a fast desktop CPU
 - Tests: 160 passed, 4 skipped, same as Phase 1. Stripe code untouched.
 
 ## Self-critique (does it read as a template?)
-Pushed further: the numeral is Instrument Serif at hero scale with a breathing glow, a pane overlaps it, and the field is hand-placed per page rather than a mesh. The sponsor page has a cropped italic 5×. Still weak: the field is pale next to the brief's "painterly" ask, and the landing page leans on one pane style in every section. Both want a stronger color pass once you've seen it.
+Pushed further: the numeral is Instrument Serif at hero scale with a breathing glow, a pane overlaps it, and the field is hand-placed per page rather than a mesh. The sponsor page has a cropped italic 5×. Color pass 2 added richer field colors, an ember glow behind the numeral, and warm and sage tinted panes so the landing sections aren't all one white. The top-left of the page is still fairly pale under the nav.
