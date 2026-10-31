@@ -1,0 +1,25 @@
+id: pse_help
+name: Puget Sound Energy HELP bill assistance
+agency: Puget Sound Energy, via community action agencies
+jurisdiction: WA (PSE service area)
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://www.pse.com/en/press-release/details/5-million-available-to-help-customers-pay-their-pse-bills
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "pse.com not directly reachable; reported eligibility is 80% of area median income, from secondary listings; PSE service area and funding unverified"
+renewal: Apply each season while funds last
+documents:
+  - PSE account number
+  - Photo ID
+  - Proof of income for everyone in the household
+application:
+  channel: Apply through your local community action agency (find one at pse.com/assistance or 1-866-223-5425)
+  url: https://www.pse.com/en/press-release/details/5-million-available-to-help-customers-pay-their-pse-bills
+rules:
+  - id: review
+    when: true
+    status: needs_human_review
+    reason: If your electric or gas comes from Puget Sound Energy, one-time bill help and an ongoing bill discount may be available. We have not verified the current income limit or your service area, so a reviewer must decide.

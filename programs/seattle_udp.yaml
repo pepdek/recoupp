@@ -1,0 +1,51 @@
+id: seattle_udp
+name: Seattle Utility Discount Program (City Light and SPU)
+agency: Seattle City Light / Seattle Public Utilities
+jurisdiction: Seattle, WA
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://www.seattle.gov/city-light/residential-services/billing-information/payment-assistance-programs   # 2026 income table, 60% City Light and 50% SPU discounts; read 2026-10-30
+unverified_inputs:
+  - income_limits_2027   # a July 2026 ordinance reportedly changes eligibility to 60% of area median income from January 2027; the page we read lists only 2026 limits. Re-verify in January.
+  - which_bills_are_yours   # value assumes your electric and water/sewer/garbage bills are City Light and SPU bills in your name
+  - account_facts   # needs a City Light account in your name
+renewal: Re-verify periodically with the City of Seattle
+documents:
+  - Government-issued ID
+  - Income documents for each adult who earns income (or your SNAP approval letter)
+  - Seattle City Light account number and the name on the account
+application:
+  channel: Online at utilityassistance.seattle.gov (recommended), or paper application by calling (206) 684-3000
+  url: https://www.seattle.gov/city-light/residential-services/billing-information/payment-assistance-programs
+constants:
+  city_light_discount: 0.60
+  spu_discount: 0.50
+tables:
+  limit_monthly: { "1": 4269, "2": 5582, "3": 6895, "4": 8209, "5": 9522, "6": 10836, "7": 11082, "8": 11328, "9": 11575, "10": 11821, each_additional: 247 }
+derived:
+  limit: { table: limit_monthly, size: { fact: hh_size } }
+  value_likely: { op: mul, args: [12, { op: add, args: [{ op: mul, args: [{ const: city_light_discount }, { fact: exp_electric }] }, { op: mul, args: [{ const: spu_discount }, { fact: exp_water }] }] }] }
+  value_low: { op: mul, args: [{ const: city_light_discount }, { fact: exp_electric }, 12] }
+rules:
+  - id: already
+    when: { fact: has_utility_discount }
+    status: already_receiving
+    reason: You told us you already get a utility bill discount.
+  - id: wrong_county
+    when: { cmp: ["!=", { fact: county }, "king"] }
+    status: unlikely
+    reason: Seattle City Light and Seattle Public Utilities serve Seattle and nearby King County areas. You live in another county.
+  - id: outside_seattle
+    when: { cmp: ["!=", { fact: city }, "seattle"] }
+    status: needs_human_review
+    reason: City Light also serves some areas outside Seattle. A reviewer must confirm whether you are a City Light customer.
+  - id: income
+    when: { cmp: ["<=", { fact: income_monthly }, { fact: limit }] }
+    status: likely
+    reason: "Monthly income {$income_monthly} is at or below the 2026 Utility Discount Program limit of {$limit} for a household of {hh_size}. It gives 60% off City Light bills and 50% off Seattle Public Utilities bills. You need a City Light account in your name."
+    value: { low: { fact: value_low }, likely: { fact: value_likely }, high: { fact: value_likely } }
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Monthly income {$income_monthly} is above the 2026 limit of {$limit} for a household of {hh_size}."

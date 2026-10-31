@@ -1,0 +1,30 @@
+id: copes
+name: Medicaid long-term care at home (COPES and related)
+agency: DSHS Aging and Long-Term Support (HCS) and HCA
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://lawfilesext.leg.wa.gov/Law/WACArchive/2024/htm/WAC%20388%20-106%20%20CHAPTER/WAC%20388%20-106%20-0320.htm
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "WAC 388-106-0320 located, not read in this pass; income/resource limits and the functional assessment are unverified"
+renewal: Annual reassessment by DSHS
+documents:
+  - Proof of income and bank balances for the past 5 years (look-back)
+  - Medicare and Apple Health cards
+  - Doctor or care provider contact
+  - Photo ID
+application:
+  channel: Call your local Home and Community Services office or Area Agency on Aging for an assessment
+  url: https://lawfilesext.leg.wa.gov/Law/WACArchive/2024/htm/WAC%20388%20-106%20%20CHAPTER/WAC%20388%20-106%20-0320.htm
+rules:
+  - id: review
+    when: { any: [{ fact: any_65plus_certain }, { fact: any_65plus_possible }, { fact: any_disabled }] }
+    status: needs_human_review
+    reason: Someone is 65 or older or has a disability. Long-term care help depends on a care-needs assessment, income and savings limits, and a 5-year look-back. We have not verified the limits, so a reviewer must decide.
+  - id: default
+    when: true
+    status: unlikely
+    reason: COPES is for adults 65 or older, or adults with a disability, who need help with daily activities.

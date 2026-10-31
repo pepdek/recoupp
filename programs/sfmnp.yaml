@@ -1,0 +1,28 @@
+id: sfmnp
+name: Senior Farmers Market Nutrition Program
+agency: DSHS Aging and Long-Term Support via Area Agencies on Aging; WA Department of Health
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://doh.wa.gov/pa/node/9369
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "Located via search, not read; reported age 60+ (local rules vary) and a household-size income table that changes yearly; benefit (about $80) reported by a 2026 form"
+renewal: Apply each market season (June to October)
+documents:
+  - Signed income affidavit
+  - Proof of age
+application:
+  channel: Apply through your local Area Agency on Aging
+  url: https://doh.wa.gov/pa/node/9369
+rules:
+  - id: review
+    when: { any: [{ fact: any_60plus_certain }, { fact: any_60plus_possible }] }
+    status: needs_human_review
+    reason: Someone is 60 or older. This program gives a small yearly card for fresh produce at farmers markets if income is under the yearly limit, which we have not verified.
+  - id: default
+    when: true
+    status: unlikely
+    reason: The program is generally for people 60 or older (some local programs start at 55 for Native Americans; tell your reviewer if that applies).

@@ -1,0 +1,28 @@
+id: family_caregiver
+name: Family Caregiver Support Program
+agency: DSHS Aging and Long-Term Support via Area Agencies on Aging
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://www.caregiver.org/connecting-caregivers/services-by-state/washington/
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "No DSHS page was located (two DSHS URLs returned 404); eligibility seen only in 211 listings and a nonprofit guide"
+renewal: Varies by local agency
+documents:
+  - Caregiver and care receiver names and contact details
+  - Care receiver's income and assets (some local programs)
+application:
+  channel: Call your local Area Agency on Aging
+  url: https://www.caregiver.org/connecting-caregivers/services-by-state/washington/
+rules:
+  - id: review
+    when: { any: [{ cmp: ["==", { fact: relationship }, "family"] }, { cmp: [">=", { fact: hh_size }, 2] }] }
+    status: needs_human_review
+    reason: An unpaid family caregiver may be able to get respite care, training, counseling and support groups. Eligibility varies by local agency and care needs, so a reviewer must check.
+  - id: default
+    when: true
+    status: unlikely
+    reason: This program is for unpaid family caregivers. The household answers do not show a caregiver.

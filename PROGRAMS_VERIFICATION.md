@@ -10,4 +10,24 @@ Method: official pages read through a fetch tool that summarizes pages. Several 
 | Apple Health (aged/blind/disabled) | **needs_review** | Who counts as aged/blind/disabled and that SSI income/resource methods apply: WAC 182-512-0050. | All dollar limits (HCA page too large to read). Never auto-recommended. |
 | Senior/disabled property tax exemption | **needs_review** | Age 61, ownership, residence and tier structure: RCW 84.36.381. | County income thresholds (Pierce page 403; DOR table not current). Law changes for taxes collected in 2027+ (2025 c 200, 2026 c 163). Never auto-recommended. |
 
-Not started (see docs/PROGRAM_SHORTLIST.md): the other 15 candidates.
+## Added in Slice 7
+
+| Program | Engine confidence | What was verified (official source) | Still needs a human |
+|---|---|---|---|
+| Lifeline | **verified** | 135% of 2026 FPL table and qualifying programs (Medicaid, SNAP, SSI, federal housing aid, Veterans Pension): lifelinesupport.org. | The $9.25 monthly benefit is from secondary sources, so the value is provisional. |
+| ORCA LIFT | **verified** | 200% FPL monthly table (sizes 1-6), Apple Health / Basic Food / WIC qualify, $1 fare: kingcounty.gov. | The page's sizes 7-8 don't match 200% of the 2026 guidelines (sent to review). The age-65 Regional Reduced Fare Permit was only in secondary sources (sent to review). No dollar value shown. |
+| LIHEAP | **verified** (income screen) | 150% FPL, apply through a local provider, once per Oct-Sep year: commerce.wa.gov/liheap (page dated April 2024). | The linked guidelines PDF wasn't read; benefit amounts, funding and any priority rules. Never "eligible", only "likely". |
+| Tacoma Public Utilities | **verified** | Discount Rate (35% off, 62+/disability, income table) and Bill Credit Assistance Plan (credits, income table): mytpu.org. | TPU account facts (name on account, single-metered, primary residence) are not collected; reviewer confirms. Value assumes the questionnaire's electric/water bills are TPU bills. |
+| Seattle Utility Discount Program | **verified** (2026 table) | 2026 income table, 60% City Light and 50% SPU discounts: seattle.gov. | Reported eligibility change from January 2027 (60% of area median income) was not on the page. Re-verify in January. |
+| Medicaid long-term care (COPES) | needs_review | WAC 388-106-0320 located. | Everything: assessment, limits, look-back. |
+| SSI + state supplement | needs_review | Aged/blind/disabled categories (WAC 182-512-0050). | Federal rate, limits, state supplement amounts; ssa.gov blocked our fetcher. |
+| Disabled veteran property tax | needs_review | RCW 84.36.381 structure. | County thresholds. |
+| VA Pension / Aid & Attendance | needs_review | Service, age/disability and discharge rules (va.gov). | Income and net-worth limits, rates. Fee rules (accredited rep) in the compliance list. |
+| Weatherization | needs_review | Page located (commerce.wa.gov/weatherization). | Income test (200% FPL or 60% SMI reported by secondary sources). |
+| PSE HELP | needs_review | None official read. | 80% AMI reported by secondary sources; service area; funding. |
+| Subsidized housing | needs_review | HUD page located. | Local income limits and waitlists. |
+| Senior Farmers Market Nutrition Program | needs_review | DOH page located. | Age and yearly income table (seen only in affidavits); benefit about $80. |
+| Family Caregiver Support Program | needs_review | None official (two DSHS URLs 404). | Eligibility and services via local Area Agency on Aging. |
+| Emergency rent/utility relief | needs_review | wa211.org located. | Specific, currently funded programs by county. |
+
+Stubs only ever produce "needs human review", "unlikely", or "already receiving", enforced by the engine and tested.

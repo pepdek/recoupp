@@ -1,0 +1,30 @@
+id: housing_assistance
+name: Subsidized or senior housing (Section 8, public housing, Section 202)
+agency: Local housing authorities (for example Tacoma Housing Authority) and HUD
+jurisdiction: US/WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://www.hud.gov/topics/rental_assistance
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "Housing authority waitlists and income limits (set locally as a percent of area median income) were not researched; hud.gov page located, not read"
+renewal: Annual recertification
+documents:
+  - Photo ID
+  - Proof of income
+  - Proof of age or disability
+  - Rental history
+application:
+  channel: Apply to your local housing authority or the senior housing property directly; waitlists are common
+  url: https://www.hud.gov/topics/rental_assistance
+rules:
+  - id: already
+    when: { fact: has_housing }
+    status: already_receiving
+    reason: You told us you already get housing assistance.
+  - id: review
+    when: true
+    status: needs_human_review
+    reason: Subsidized and senior housing depends on local income limits and waitlists we have not verified. A reviewer will check what is open near you. Waitlists can be long, so we track this but never promise it.

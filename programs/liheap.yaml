@@ -1,0 +1,39 @@
+id: liheap
+name: Energy bill help (LIHEAP) through your local agency
+agency: WA Department of Commerce, via local community action agencies
+jurisdiction: WA
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://www.commerce.wa.gov/liheap   # 150% FPL income limit, apply through local provider, once per Oct-Sep program year; page dated April 2024
+  - https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines
+unverified_inputs:
+  - dollar_value   # award depends on household size, income and heating cost; no estimate shown
+  - current_year_limits   # the page cites 150% FPL but links a separate guidelines PDF we did not read
+  - funding_and_priority
+renewal: Apply again each program year (October 1 to September 30)
+documents:
+  - Photo ID
+  - Proof of income for everyone in the household
+  - Recent heating or electric bill
+  - Proof of address
+application:
+  channel: Book an appointment with your local provider (county lookup on the Commerce LIHEAP page)
+  url: https://www.commerce.wa.gov/liheap
+tables:
+  fpl_2026: { "1": 15960, "2": 21640, "3": 27320, "4": 33000, "5": 38680, "6": 44360, "7": 50040, "8": 55720, each_additional: 5680 }
+derived:
+  limit_monthly: { op: div, args: [{ op: mul, args: [{ table: fpl_2026, size: { fact: hh_size } }, 1.5] }, 12] }
+rules:
+  - id: already
+    when: { fact: has_liheap }
+    status: already_receiving
+    reason: You told us you already get energy assistance this year.
+  - id: income
+    when: { cmp: ["<=", { fact: income_monthly }, { fact: limit_monthly }] }
+    status: likely
+    reason: "Monthly income {$income_monthly} is at or below the LIHEAP limit of {$limit_monthly} (150% of the 2026 poverty level for a household of {hh_size}). The amount depends on household size, income, heating cost and available funds."
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Monthly income {$income_monthly} is above the LIHEAP limit of {$limit_monthly} (150% of the poverty level)."

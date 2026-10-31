@@ -1,0 +1,69 @@
+id: tpu_assistance
+name: Tacoma Public Utilities discount or bill credit
+agency: Tacoma Public Utilities (TPU)
+jurisdiction: Tacoma, WA
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://www.mytpu.org/?p=1005   # Discount Rate Program (35% off, 62+/disability, income table) and Bill Credit Assistance Plan; read 2026-10-30
+unverified_inputs:
+  - account_facts   # needs a TPU account in your name, primary residence, single-metered service; not collected, so a reviewer confirms
+  - which_bills_are_tpu   # value assumes your electric, water/sewer/garbage bills in the questionnaire are TPU bills
+  - income_limits_change   # limits are updated periodically
+renewal: Re-verify periodically with TPU
+documents:
+  - Photo ID for the account holder and each household member 22 or older
+  - Income proof for the month before you apply (3 months if self-employed)
+  - Your TPU account number
+application:
+  channel: Online Formstack form on the TPU site, or mail the printable application to 3628 South 35th Street, Tacoma WA 98409; questions 253-502-8400
+  url: https://www.mytpu.org/?p=1005
+constants:
+  bcap_monthly_base: 58.30
+  bcap_annual_max: 1227.60
+  discount: 0.35
+tables:
+  discount_limit_monthly: { "1": 3346, "2": 3821, "3": 4300, "4": 4775, "5": 5158, "6": 5542 }
+  bcap_limit_monthly: { "1": 4458, "2": 5096, "3": 5733, "4": 6367, "5": 6879, "6": 7388 }
+derived:
+  discount_limit: { table: discount_limit_monthly, size: { op: min, args: [{ fact: hh_size }, 6] } }  # capped; bigger households go to review first
+  bcap_limit: { table: bcap_limit_monthly, size: { op: min, args: [{ fact: hh_size }, 6] } }
+  disc_likely: { op: mul, args: [{ const: discount }, { op: add, args: [{ fact: exp_electric }, { fact: exp_water }] }, 12] }
+  disc_low: { op: mul, args: [{ const: discount }, { fact: exp_electric }, 12] }
+  bcap_low: { op: mul, args: [{ const: bcap_monthly_base }, 12] }
+rules:
+  - id: wrong_county
+    when: { cmp: ["!=", { fact: county }, "pierce"] }
+    status: unlikely
+    reason: Tacoma Public Utilities serves the Tacoma area in Pierce County. You live in another county.
+  - id: big_household
+    when: { cmp: [">", { fact: hh_size }, 6] }
+    status: needs_human_review
+    reason: Households of more than 6 people need a reviewer to check the current TPU limits.
+  - id: outside_tacoma
+    when: { cmp: ["!=", { fact: city }, "tacoma"] }
+    status: needs_human_review
+    reason: TPU also serves some areas outside the city of Tacoma. A reviewer must confirm whether your address is a TPU customer.
+  - id: discount
+    when: { all: [{ fact: any_62plus_certain }, { cmp: ["<=", { fact: income_monthly }, { fact: discount_limit }] }] }
+    status: likely
+    reason: "Someone is 62 or older and monthly income {$income_monthly} is at or below the TPU Discount Rate limit of {$discount_limit}. It takes 35% off electricity, water, sewer, garbage and stormwater. The Bill Credit Assistance Plan may be worth more; a reviewer will compare."
+    value: { low: { fact: disc_low }, likely: { fact: disc_likely }, high: { fact: disc_likely } }
+  - id: disability
+    when: { all: [{ fact: any_disabled }, { cmp: ["<=", { fact: income_monthly }, { fact: discount_limit }] }] }
+    status: likely
+    reason: "Someone has a disability and monthly income {$income_monthly} is at or below the TPU Discount Rate limit of {$discount_limit}. A reviewer confirms the disability income requirement."
+    value: { low: { fact: disc_low }, likely: { fact: disc_likely }, high: { fact: disc_likely } }
+  - id: age_unclear
+    when: { all: [{ fact: any_62plus_possible }, { cmp: ["<=", { fact: income_monthly }, { fact: discount_limit }] }] }
+    status: needs_human_review
+    reason: Someone may turn 62 this year; whether the senior discount applies depends on their birthday, so a reviewer must confirm.
+  - id: bcap
+    when: { cmp: ["<=", { fact: income_monthly }, { fact: bcap_limit }] }
+    status: likely
+    reason: "Monthly income {$income_monthly} is at or below the TPU Bill Credit Assistance Plan limit of {$bcap_limit}. It gives an automatic monthly credit ($58.30 base, up to $1,227.60 a year with on-time payments)."
+    value: { low: { fact: bcap_low }, likely: { fact: bcap_low }, high: { const: bcap_annual_max } }
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Monthly income {$income_monthly} is above the highest TPU assistance limit ({$bcap_limit})."

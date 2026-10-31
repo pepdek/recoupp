@@ -1,0 +1,37 @@
+id: property_tax_veteran
+name: Disabled veteran property tax exemption
+agency: County Assessor-Treasurer; WA Department of Revenue
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://app.leg.wa.gov/RCW/default.aspx?cite=84.36.381
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "RCW 84.36.381 lists VA-rated veterans (40%+ or total service-connected) as qualifying for the senior/disabled exemption; county income thresholds unverified"
+renewal: Renew at least every 6 years or on county request
+documents:
+  - VA disability rating letter
+  - Proof of last year's income
+  - Deed or proof of ownership
+application:
+  channel: County Assessor-Treasurer office
+  url: https://app.leg.wa.gov/RCW/default.aspx?cite=84.36.381
+rules:
+  - id: already
+    when: { fact: has_property_tax }
+    status: already_receiving
+    reason: You told us you already get a property tax exemption.
+  - id: not_owner
+    when: { cmp: ["!=", { fact: tenure }, "own"] }
+    status: unlikely
+    reason: This exemption is for homeowners who live in the home as their main residence.
+  - id: review
+    when: { fact: any_veteran }
+    status: needs_human_review
+    reason: You own your home and a household member is a veteran. A VA rating of 40% or more can qualify, subject to a county income limit we have not verified, so a reviewer must check.
+  - id: default
+    when: true
+    status: unlikely
+    reason: No veteran is recorded in the household.

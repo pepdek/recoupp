@@ -1,0 +1,35 @@
+id: ssi
+name: Supplemental Security Income (SSI) and Washington state supplement
+agency: Social Security Administration; DSHS (state supplement)
+jurisdiction: US/WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://www.ssa.gov/ssi
+  - https://app.leg.wa.gov/WAC/default.aspx?cite=182-512-0050
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "ssa.gov returned 403 to our fetcher; WAC 182-512-0050 confirms the aged (65+), blind, disabled categories; federal rate, income and resource limits and state supplement amounts are unverified"
+renewal: Periodic SSA redeterminations
+documents:
+  - Social Security card (the SSA, not us, collects the number)
+  - Proof of income, bank balances and housing costs
+  - Medical records if applying for disability
+  - Photo ID
+application:
+  channel: Apply with the Social Security Administration online or at 1-800-772-1213
+  url: https://www.ssa.gov/ssi
+rules:
+  - id: already
+    when: { fact: has_ssi }
+    status: already_receiving
+    reason: You told us you already get SSI.
+  - id: review
+    when: { any: [{ fact: any_65plus_certain }, { fact: any_65plus_possible }, { fact: any_disabled }] }
+    status: needs_human_review
+    reason: Someone is 65 or older or has a disability, the basic categories for SSI. SSI also has strict income and savings limits we have not verified, so a reviewer must decide.
+  - id: default
+    when: true
+    status: unlikely
+    reason: SSI is for people 65 or older, blind, or disabled. No one in the household fits those categories.

@@ -1,0 +1,49 @@
+id: orca_lift
+name: ORCA LIFT reduced transit fare
+agency: King County Metro and regional transit agencies
+jurisdiction: WA (Puget Sound region)
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - https://kingcounty.gov/en/dept/metro/fares-and-payment/reduced-fares/orca-lift   # 200% FPL monthly table, benefit-based eligibility, $1 fare; read 2026-10-30
+  - https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines
+unverified_inputs:
+  - dollar_value   # savings depend on how much you ride; no estimate shown
+  - rrfp_rules     # the age-65/Medicare Regional Reduced Fare Permit (income-independent) was seen only in secondary sources
+  - household_size_7_plus   # the page's table for sizes 7 and 8 does not match 200% of the 2026 guidelines
+renewal: Card re-verified periodically through the Reduced Fare Portal
+documents:
+  - Proof of income or proof you get Apple Health, Basic Food, or WIC
+  - Photo ID
+application:
+  channel: Reduced Fare Portal online, an authorized enrollment office, or CHAP at 800-756-5437
+  url: https://kingcounty.gov/en/dept/metro/fares-and-payment/reduced-fares/orca-lift
+tables:
+  limit_monthly_table: { "1": 2660, "2": 3607, "3": 4553, "4": 5500, "5": 6447, "6": 7393 }   # published 200% FPL monthly table, sizes 1-6
+derived:
+  limit_monthly: { table: limit_monthly_table, size: { op: min, args: [{ fact: hh_size }, 6] } }  # size capped at 6; bigger households go to review first
+rules:
+  - id: already
+    when: { fact: has_orca }
+    status: already_receiving
+    reason: You told us you already have a reduced-fare transit card.
+  - id: benefit
+    when: { any: [{ fact: has_basic_food }, { fact: has_apple_health }, { cmp: ["==", { fact: medicaid }, "yes"] }] }
+    status: eligible
+    reason: People who get Basic Food or Apple Health qualify for ORCA LIFT regardless of income.
+  - id: big_household
+    when: { cmp: [">", { fact: hh_size }, 6] }
+    status: needs_human_review
+    reason: Households of more than 6 people need a reviewer to check the current ORCA LIFT limit.
+  - id: income
+    when: { cmp: ["<=", { fact: income_monthly }, { fact: limit_monthly }] }
+    status: eligible
+    reason: "Monthly income {$income_monthly} is at or below the ORCA LIFT limit of {$limit_monthly} (200% of the 2026 poverty level for a household of {hh_size})."
+  - id: senior_pass
+    when: { cmp: ["==", { fact: medicare }, "yes"] }
+    status: needs_human_review
+    reason: Your income is over the ORCA LIFT limit, but people on Medicare or age 65+ can get the Regional Reduced Fare Permit regardless of income. We haven't verified that program's rules, so a reviewer will check.
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Monthly income {$income_monthly} is above the ORCA LIFT limit of {$limit_monthly} and no qualifying benefit was found."

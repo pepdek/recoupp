@@ -45,7 +45,7 @@ rules:
   - id: zero_income
     when: { cmp: ["==", { fact: income_monthly }, 0] }
     status: eligible
-    reason: "Households with no income get the full maximum benefit, {$max_benefit} a month for {hh_size} people (WAC 388-478-0060)."
+    reason: "Households with no income get the full maximum benefit, {$max_benefit} a month for a household of {hh_size} (WAC 388-478-0060)."
     value: { low: { fact: annual_high }, likely: { fact: annual_high }, high: { fact: annual_high } }
   - id: elderly_certain_pass
     when: { all: [{ fact: any_60plus_certain }, { cmp: ["<=", { fact: income_monthly }, { fact: net_limit }] }] }
@@ -73,4 +73,4 @@ rules:
   - id: over
     when: true
     status: unlikely
-    reason: "Monthly income {$income_monthly} is too high for Basic Food for {hh_size} people even after allowing for deductions."
+    reason: "Monthly income {$income_monthly} is too high for Basic Food for a household of {hh_size} even after allowing for deductions."

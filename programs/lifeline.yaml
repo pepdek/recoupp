@@ -1,0 +1,44 @@
+id: lifeline
+name: Lifeline phone or internet discount
+agency: FCC / USAC (National Verifier)
+jurisdiction: US
+confidence: verified
+last_verified: 2026-10-30
+source_urls:
+  - http://www.lifelinesupport.org/how-to-qualify/   # 135% of 2026 FPL table and qualifying-program list, read 2026-10-30
+  - https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines   # 2026 FPL
+unverified_inputs:
+  - benefit_amount   # the page did not state the monthly benefit; $9.25 comes from secondary sources. One discount per household, phone OR internet.
+renewal: Annual recertification with the National Verifier
+documents:
+  - Proof of income (benefit letter, tax return) or proof you are on SNAP, Medicaid, SSI, housing assistance, or a Veterans Pension
+  - Photo ID
+application:
+  channel: Apply online with the National Verifier, then choose a participating phone or internet company
+  url: https://www.lifelinesupport.org
+constants:
+  monthly_benefit: 9.25
+tables:
+  fpl_2026: { "1": 15960, "2": 21640, "3": 27320, "4": 33000, "5": 38680, "6": 44360, "7": 50040, "8": 55720, each_additional: 5680 }
+derived:
+  limit_annual: { op: mul, args: [{ table: fpl_2026, size: { fact: hh_size } }, 1.35] }
+  annual_value: { op: mul, args: [{ const: monthly_benefit }, 12] }
+rules:
+  - id: already
+    when: { fact: has_lifeline }
+    status: already_receiving
+    reason: You told us you already get Lifeline.
+  - id: program
+    when: { any: [{ fact: has_basic_food }, { fact: has_apple_health }, { cmp: ["==", { fact: medicaid }, "yes"] }, { fact: has_ssi }, { fact: has_housing }, { fact: has_va }] }
+    status: eligible
+    reason: You already take part in a program that qualifies you for Lifeline (SNAP, Medicaid, SSI, federal housing assistance, or a Veterans Pension).
+    value: { low: { fact: annual_value }, likely: { fact: annual_value }, high: { fact: annual_value } }
+  - id: income
+    when: { cmp: ["<=", { fact: income_annual }, { fact: limit_annual }] }
+    status: eligible
+    reason: "Yearly income {$income_annual} is at or below the Lifeline limit of {$limit_annual} (135% of the 2026 poverty level for a household of {hh_size})."
+    value: { low: { fact: annual_value }, likely: { fact: annual_value }, high: { fact: annual_value } }
+  - id: over
+    when: true
+    status: unlikely
+    reason: "Yearly income {$income_annual} is above the Lifeline limit of {$limit_annual} and no qualifying program was found."

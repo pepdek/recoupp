@@ -1,0 +1,26 @@
+id: weatherization
+name: Free home weatherization
+agency: WA Department of Commerce, via local agencies
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://commerce.wa.gov/weatherization
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "Commerce page located via search, not read; income test (reported as the greater of 200% FPL or 60% of state median income) seen only in secondary sources"
+renewal: One-time service; may be limited to once per home
+documents:
+  - Photo ID
+  - Proof of income
+  - Proof of ownership or landlord permission
+  - Recent energy bill
+application:
+  channel: Apply through your local weatherization provider (Commerce does not take applications)
+  url: https://commerce.wa.gov/weatherization
+rules:
+  - id: review
+    when: true
+    status: needs_human_review
+    reason: Weatherization (insulation, sealing, heating repairs) may be available if income is under the program limit. We have not verified the current limit, so a reviewer must decide.

@@ -1,0 +1,26 @@
+id: emergency_relief
+name: Emergency rent and utility relief
+agency: County and city human services; local community action agencies; WA 211
+jurisdiction: WA
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://wa211.org
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "Funding is intermittent and local; wa211.org located, specific programs not researched"
+renewal: Varies; funds are limited
+documents:
+  - Photo ID
+  - Proof of income
+  - Past-due notice or lease
+  - Proof of hardship
+application:
+  channel: Call 2-1-1 (WA 211) to find what is open in your county
+  url: https://wa211.org
+rules:
+  - id: review
+    when: true
+    status: needs_human_review
+    reason: One-time help with past-due rent or utility bills may be open in your county. Funding comes and goes, so a reviewer must check what is available now.

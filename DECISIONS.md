@@ -45,3 +45,20 @@
 43. **"Invited" in the funnel = opened the enrollment link** (anonymous counter, no identifiers). We don't know who a sponsor sent the link to.
 44. **Reports** are a snapshot at download time (PDF and CSV) with 30-day deltas for new households and verified value; true month-end snapshots would need stored history (Slice 7 if wanted). Sponsor logins are provisioned with `scripts/sponsor-invoice.ts --viewer email`, which adds a `sponsor_viewer` row to `staff_emails`.
 45. **Deleted households:** ledger rows survive (decision 34), so after a deletion the verified total still counts but the enrolled count drops, which inflates the average slightly. Acceptable for pilot scale; revisit with counsel.
+46. **20 programs, 7 verified.** Verified: Medicare Savings Program, Extra Help, Basic Food, Lifeline, ORCA LIFT, LIHEAP (income screen), TPU, Seattle UDP. The other 12 (including Apple Health and the property-tax exemptions) are `needs_review` stubs that can only route to a reviewer. Details and gaps: `PROGRAMS_VERIFICATION.md`. A dead "approved for Basic Food" shortcut in Lifeline and ORCA was removed after writing tests showed it could never fire (SNAP's net limit is below both programs' limits).
+47. **Reminders:** a daily Netlify scheduled function calls `/api/cron/reminders` (bearer `CRON_SECRET`) which finds due reminders with the pure function `dueReminders()`, claims a `reminder_log` row first (so a retry can't double-send), then sends through Resend's HTTP API. Kinds: docs missing (7+ days, no uploads, max 3), agency needs info (weekly, max 4), renewal 30 and 7 days. Email only; no SMS. `?dry=1` lists without sending. Untested against real Resend (no key).
+48. **Kill-criteria dashboard (`/admin/kill`)** shows completion rate, verified-gain multiple, and margin with red/green/no-data lights. Margin uses assumptions: reviewer wage $40/hr and Sonnet-class API prices ($2 in / $10 out per million tokens), overridable by env. It ignores Stripe fees, hosting and your own time.
+49. **Admin screens are read-mostly:** programs (confidence, last verified, stale > 1 year), sponsors, payments. Program rules are edited in git (YAML), not in the browser, so every change has history and a version hash. Sponsor creation stays a script.
+50. **Seed data is SQL you run yourself** (`npm run seed:sql`), not auto-inserted. I confirmed the generated inserts satisfy every table constraint in a rolled-back run against the dev database.
+
+## Phase 1 status against the Definition of Done
+Done and tested in code or SQL: payments + idempotent webhook, intake + consent, rules engine (20 programs), packets (answers sheets), uploads + confirmed extraction, reviewer console, append-only ledger, sponsor dashboard + guarantee, reminders, kill dashboard, RLS proofs, legal drafts, compliance checklist, README.
+**Not done / not verified:**
+- No live run with real keys: Stripe checkout/webhook, Anthropic extraction, Resend email, magic-link login were never exercised end to end.
+- Sentry error tracking not added (needs a DSN and PII scrubbing config).
+- The Playwright happy path (intake -> plan -> pay -> packet) not written; it needs a test login hook.
+- RLS integration tests in `tests/rls.test.ts` skipped (need the service-role key); the same rules were proven with SQL.
+- No `proxy.ts` session refresh (DECISIONS 19).
+- Packets are answers sheets, not filled official forms (DECISIONS 25).
+- 12 of 20 programs unverified; Basic Food FY2027 tables (Oct 2026) not checked.
+- Nothing deployed to production; draft deploys only; Stripe live mode off.

@@ -131,7 +131,7 @@ describe("program data and engine invariants", () => {
     expect(plan.items.find((i) => i.program_id === "extra_help")!.note).toMatch(/first/);
     expect(plan.total_provisional).toBe(true);
     expect(plan.total.high).toBeGreaterThanOrEqual(plan.total.likely);
-    expect(plan.total.likely).toBeCloseTo(2434.8); // only MSP is eligible with a value; Basic Food is pending review
+    expect(plan.total.likely).toBeCloseTo(2434.8 + 111); // MSP premium + Lifeline ($9.25 x 12); Basic Food is pending review
     expect(plan.pending_review_total.high).toBe(3576);
     expect(plan.items.every((i) => i.requires_review)).toBe(true);
   });

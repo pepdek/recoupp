@@ -2,7 +2,7 @@ import type { Facts } from "./engine";
 import { BENEFITS } from "./intake";
 
 type Member = { birth_year: number; veteran: boolean; disabled: boolean };
-type Household = { answers: Record<string, unknown> };
+type Household = { answers: Record<string, unknown>; county?: string | null; city?: string | null; relationship?: string | null };
 
 const n = (v: unknown) => (typeof v === "number" ? v : Number(v) || 0);
 
@@ -14,7 +14,7 @@ export function buildFacts(h: Household, members: Member[], year = new Date().ge
     certain: min.some((x) => x >= age),
     possible: max.some((x, i) => x >= age && min[i] < age),
   });
-  const s60 = atLeast(60), s61 = atLeast(61);
+  const s60 = atLeast(60), s61 = atLeast(61), s62 = atLeast(62), s65 = atLeast(65);
   const wages = n(a.inc_wages), unearned = n(a.inc_social_security) + n(a.inc_ssi) + n(a.inc_pension) + n(a.inc_other);
 
   Object.assign(f, {
@@ -22,6 +22,10 @@ export function buildFacts(h: Household, members: Member[], year = new Date().ge
     unit_size: Math.min(members.length, 2), unit_ambiguous: members.length > 2,
     any_60plus_certain: s60.certain, any_60plus_possible: !s60.certain && s60.possible,
     any_61plus_certain: s61.certain, any_61plus_possible: !s61.certain && s61.possible,
+    any_62plus_certain: s62.certain, any_62plus_possible: !s62.certain && s62.possible,
+    any_65plus_certain: s65.certain, any_65plus_possible: !s65.certain && s65.possible,
+    county: (h.county ?? "").trim().toLowerCase(), city: (h.city ?? "").trim().toLowerCase(), relationship: h.relationship ?? "self",
+    exp_electric: n(a.exp_electric), exp_heat: n(a.exp_heat), exp_water: n(a.exp_water), exp_phone_internet: n(a.exp_phone_internet), exp_medical: n(a.exp_medical), housing_cost: n(a.housing_cost),
     any_disabled: members.some((m) => m.disabled), any_veteran: members.some((m) => m.veteran),
     wages_monthly: wages, income_unearned_monthly: unearned, income_monthly: wages + unearned, income_annual: (wages + unearned) * 12,
     has_ssi: n(a.inc_ssi) > 0,

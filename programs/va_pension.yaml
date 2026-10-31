@@ -1,0 +1,38 @@
+id: va_pension
+name: VA Pension and Aid and Attendance
+agency: U.S. Department of Veterans Affairs
+jurisdiction: US
+confidence: needs_review
+last_verified: 2026-10-30
+source_urls:
+  - https://www.va.gov/pension/eligibility/
+unverified_inputs:
+  - eligibility_rules
+  - dollar_value
+  - "Service, age/disability and discharge rules read on va.gov 2026-10-30; income and net-worth dollar limits and Aid and Attendance rates were not on the page"
+renewal: Annual eligibility verification report
+documents:
+  - DD-214 discharge papers
+  - Proof of income and net worth
+  - Medical evidence of need for daily-living help (Aid and Attendance)
+  - Marriage and dependent records
+application:
+  channel: Apply online at va.gov, or get free help from an accredited VA representative
+  url: https://www.va.gov/pension/eligibility/
+rules:
+  - id: already
+    when: { fact: has_va }
+    status: already_receiving
+    reason: You told us you already get VA benefits.
+  - id: no_vet
+    when: { all: [{ not: { fact: any_veteran } }] }
+    status: unlikely
+    reason: VA Pension is for wartime veterans and their surviving spouses. No veteran is recorded in the household. If a household member is a veteran's surviving spouse, tell your reviewer.
+  - id: review
+    when: { any: [{ fact: any_65plus_certain }, { fact: any_65plus_possible }, { fact: any_disabled }] }
+    status: needs_human_review
+    reason: A veteran is in the household and the age or disability requirement may be met. Pension also depends on wartime service, discharge status, and income and net-worth limits we have not verified, so a reviewer must check.
+  - id: default
+    when: true
+    status: unlikely
+    reason: VA Pension needs the veteran to be 65 or older or disabled.
