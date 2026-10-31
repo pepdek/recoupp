@@ -1,0 +1,10 @@
+Here's your sign-in link.
+
+Tap the button to sign in. No password needed.
+
+The link works once and runs out in an hour. If you didn't ask for it, ignore this email.
+
+Sign in: {{ .ConfirmationURL }}
+
+--
+Recoup helps with paperwork. We're not a law firm, tax preparer or financial adviser. Each agency makes the final decision.

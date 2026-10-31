@@ -10,47 +10,48 @@ export default async function Intake({ searchParams }: { searchParams: Promise<{
   if (household?.status === "in_progress") redirect(`/intake/${household.step}`);
   if (household) {
     return (
-      <main className="mx-auto max-w-xl p-6 text-xl">
-        <h1 className="text-3xl font-semibold">Your questionnaire is complete</h1>
-        <p className="mt-4">A reviewer will check your results. We&apos;ll email you when your plan is ready.</p>
-        <Link className="mt-6 block underline" href="/plan">See your plan</Link>
-        <Link className="mt-3 block underline" href="/documents">Upload documents</Link>
-        <Link className="mt-3 block underline" href="/account">Download or delete my data</Link>
+      <main className="wrap-narrow py-10">
+        <h1>You're done with the questions</h1>
+        <p className="mt-4">A reviewer is checking your answers. We'll email you when your plan is ready.</p>
+        <div className="mt-6 flex flex-wrap gap-4">
+          <Link className="btn" href="/plan">See my plan</Link>
+          <Link className="btn btn-quiet" href="/documents">Add documents</Link>
+        </div>
+        <p className="mt-6"><Link href="/account">Download or delete my data</Link></p>
       </main>
     );
   }
   return (
-    <main className="mx-auto max-w-xl p-6 text-xl leading-relaxed">
-      <h1 className="text-3xl font-semibold">Before we start</h1>
-      {sponsor && <p className="mt-2 text-gray-700">You're enrolling through {sponsor.name}.</p>}
-      <div className="mt-4 space-y-3">
-        <p><b>What we ask:</b> household members and ages, income, savings, housing and bill costs, health coverage, and benefits you already get. We never ask for your Social Security number.</p>
-        <p><b>Why:</b> to check which programs you may qualify for and prepare your applications.</p>
-        <p><b>Who sees it:</b> you and our review team. No one else sees it unless you tell us they can.</p>
-        <p><b>Delete anytime:</b> from your account page, or by emailing us. You can also download a copy.</p>
-      </div>
-      <form action={startIntake} className="mt-6 space-y-5">
+    <main className="wrap-narrow py-10">
+      <h1>Before we start</h1>
+      {sponsor && <p className="mt-3 font-bold">You're signing up through {sponsor.name}.</p>}
+      <dl className="slip mt-6 space-y-4">
+        <div><dt className="font-bold">What we ask</dt><dd>Who lives at home and their ages, income, savings, housing and bills, health coverage, and help you already get. Never your Social Security number.</dd></div>
+        <div><dt className="font-bold">Why</dt><dd>To check which programs you may qualify for and fill in your paperwork.</dd></div>
+        <div><dt className="font-bold">Who sees it</dt><dd>You and our review team. No one else, unless you say so.</dd></div>
+        <div><dt className="font-bold">Delete it</dt><dd>Any time, from your account page. You can download a copy too.</dd></div>
+      </dl>
+      <form action={startIntake} className="mt-8 space-y-6">
         <input type="hidden" name="org" value={sponsor ? org : ""} />
-        <label className="block">Who is filling this out?
-          <select name="relationship" className="mt-1 w-full rounded border p-3" defaultValue="self">
-            <option value="self">I&apos;m answering for myself</option>
-            <option value="family">I&apos;m a family member helping</option>
-            <option value="caseworker">I&apos;m a caseworker helping</option>
+        <label className="field">Who is filling this out?
+          <select name="relationship" className="input" defaultValue="self">
+            <option value="self">Me, for myself</option>
+            <option value="family">A family member helping</option>
+            <option value="caseworker">A caseworker helping</option>
             <option value="other">Someone else</option>
           </select>
         </label>
-        <label className="flex gap-3"><input type="checkbox" name="consent" className="mt-2 size-6" />
-          <span>I agree to the above and want Recoup to use my answers to check my eligibility. (If I&apos;m helping someone, they&apos;ve asked me to.)</span>
+        <label className="check items-start"><input type="checkbox" name="consent" className="mt-1" />
+          <span>I agree to the above. I want you to use my answers to check which programs I may qualify for. If I'm helping someone, they asked me to.</span>
         </label>
         {sponsor && (
-          <label className="flex gap-3"><input type="checkbox" name="share" className="mt-2 size-6" />
-            <span>Optional: let {sponsor.name} see my individual results. If I leave this unchecked, they only see combined totals.</span>
+          <label className="check items-start"><input type="checkbox" name="share" className="mt-1" />
+            <span>Optional: let {sponsor.name} see my own results. Leave this empty and they see only combined totals.</span>
           </label>
         )}
-        {error && <p className="text-red-700">Please check the box to continue.</p>}
-        <button className="rounded bg-black px-6 py-3 text-white">Continue</button>
+        {error && <p role="alert" className="err">Please tick the first box to go on.</p>}
+        <button className="btn">Go on</button>
       </form>
-      <p className="mt-8 text-sm text-gray-600">Estimates only. Not legal, tax, or financial advice. A person reviews results; the agency decides.</p>
     </main>
   );
 }

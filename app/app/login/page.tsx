@@ -12,16 +12,17 @@ export default function Login() {
     setSent(true);
   }
   return (
-    <main className="mx-auto max-w-md p-6">
-      <h1 className="text-2xl font-semibold">Sign in</h1>
+    <main className="wrap-narrow py-10">
+      <h1>Sign in</h1>
       {sent ? (
-        <p className="mt-4 text-lg">Check your email for a sign-in link.</p>
+        <div className="ticket mt-6"><p className="font-bold">Check your email.</p><p>We sent you a link. Open it on this device. No password needed.</p></div>
       ) : (
-        <form onSubmit={submit} className="mt-4 space-y-4">
-          <label className="block text-lg">Email
-            <input name="email" type="email" required className="mt-1 w-full rounded border p-3 text-lg" />
+        <form onSubmit={submit} className="mt-6 space-y-5">
+          <label className="field">Your email
+            <span className="hint">We'll send you a one-time link.</span>
+            <input name="email" type="email" required autoComplete="email" className="input" />
           </label>
-          <button className="rounded bg-black px-5 py-3 text-lg text-white">Email me a link</button>
+          <button className="btn">Email me the link</button>
         </form>
       )}
     </main>

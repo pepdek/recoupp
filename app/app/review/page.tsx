@@ -1,4 +1,5 @@
 import Link from "next/link";
+import QueueKeys from "@/components/QueueKeys";
 import { claimPlan, evaluateAll } from "@/lib/engine";
 import { buildFacts } from "@/lib/facts";
 import { programs } from "@/lib/programs";
@@ -22,20 +23,23 @@ export default async function Queue() {
   }).sort((a, b) => b.value - a.value || b.days - a.days);
 
   return (
-    <main className="mx-auto max-w-3xl p-6 text-lg">
-      <h1 className="text-3xl font-semibold">Review queue</h1>
-      <p className="mt-1 text-gray-600">{rows.length} waiting · sorted by estimated yearly value, then age</p>
-      <ul className="mt-4 space-y-2">
-        {rows.map(({ h, value, days, escalated: e }) => (
-          <li key={h.id}>
-            <Link href={`/review/${h.id}`} className="flex justify-between rounded border p-3 hover:bg-gray-50">
-              <span>{h.city}, {h.county} County · {h.relationship === "self" ? "self" : `by ${h.relationship}`}{e && <b className="ml-2 text-red-700">escalated</b>}</span>
-              <span>~{$(value)}/yr · {days}d</span>
-            </Link>
-          </li>
-        ))}
-        {!rows.length && <li className="text-gray-600">Nothing waiting.</li>}
-      </ul>
+    <main className="wrap py-6">
+      <h1>Review queue</h1>
+      <p className="muted mt-1">{rows.length} waiting. Sorted by estimated yearly value, then age.</p>
+      <div className="mt-2"><QueueKeys /></div>
+      <table className="tbl mt-4">
+        <thead><tr><th>Household</th><th>Filled by</th><th className="num">Est. a year</th><th className="num">Waiting</th><th>State</th></tr></thead>
+        <tbody>
+          {rows.map(({ h, value, days, escalated: e }) => (
+            <tr key={h.id}>
+              <td><Link data-row href={`/review/${h.id}`} className="font-bold">{h.city}, {h.county} County</Link></td>
+              <td>{h.relationship}</td><td className="num">~{$(value)}</td><td className="num">{days}d</td>
+              <td>{e ? <span className="stamp stamp-red">Escalated</span> : "New"}</td>
+            </tr>
+          ))}
+          {!rows.length && <tr><td colSpan={5} className="muted">Nothing waiting.</td></tr>}
+        </tbody>
+      </table>
     </main>
   );
 }

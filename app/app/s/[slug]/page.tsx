@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
+import { BRAND } from "@/lib/brand";
 
 export default async function SponsorLanding({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -9,12 +10,15 @@ export default async function SponsorLanding({ params }: { params: Promise<{ slu
   if (!org) notFound();
   await sb.rpc("log_visit", { p_slug: slug });
   return (
-    <main className="mx-auto max-w-xl p-6 text-xl leading-relaxed">
+    <main className="wrap-narrow py-10">
       {org.logo_url?.startsWith("https://") && /* eslint-disable-next-line @next/next/no-img-element */ <img src={org.logo_url} alt={org.name} className="mb-6 max-h-20" />}
-      <h1 className="text-3xl font-semibold">{org.name} has teamed up with Recoup</h1>
-      <p className="mt-4">Washington has housing, food, health, utility, and tax help for older adults. Answer a few questions and we&apos;ll check which programs you may qualify for and prepare the applications. A real person reviews every result.</p>
-      <a href={`/intake?org=${encodeURIComponent(slug)}`} className="mt-6 inline-block rounded bg-black px-6 py-3 text-white">Get started</a>
-      <p className="mt-8 text-sm text-gray-600">Your answers are private. {org.name} sees only combined totals unless you choose to share your own results. Estimates only; not legal, tax, or financial advice; the agency makes the final decision.</p>
+      <h1>{org.name} wants you to check this.</h1>
+      <p className="mt-4">Washington has help with food, health costs, bills and taxes for older adults. Many people who qualify never apply. Answer some questions and we'll check, then fill in the paperwork. A real person reviews every result.</p>
+      <p className="mt-6"><a href={`/intake?org=${encodeURIComponent(slug)}`} className="btn">Start now</a></p>
+      <div className="slip small mt-8">
+        <p className="font-bold">Your answers are private.</p>
+        <p>{org.name} sees combined totals only, unless you choose to share your own results. {BRAND} gives estimates, not legal, tax or financial advice. Each agency makes the final decision.</p>
+      </div>
     </main>
   );
 }

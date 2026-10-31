@@ -12,7 +12,8 @@
     "prebuild": "tsx scripts/build-programs.ts",
     "pretest": "tsx scripts/build-programs.ts",
     "plan": "tsx scripts/plan.ts",
-    "seed:sql": "tsx scripts/seed-sql.ts"
+    "seed:sql": "tsx scripts/seed-sql.ts",
+    "email:preview": "tsx scripts/email-preview.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

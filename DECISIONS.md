@@ -50,6 +50,8 @@
 48. **Kill-criteria dashboard (`/admin/kill`)** shows completion rate, verified-gain multiple, and margin with red/green/no-data lights. Margin uses assumptions: reviewer wage $40/hr and Sonnet-class API prices ($2 in / $10 out per million tokens), overridable by env. It ignores Stripe fees, hosting and your own time.
 49. **Admin screens are read-mostly:** programs (confidence, last verified, stale > 1 year), sponsors, payments. Program rules are edited in git (YAML), not in the browser, so every change has history and a version hash. Sponsor creation stays a script.
 50. **Seed data is SQL you run yourself** (`npm run seed:sql`), not auto-inserted. I confirmed the generated inserts satisfy every table constraint in a rolled-back run against the dev database.
+51. **Phase 2 design (see docs/DESIGN_BRIEF.md, BRAND.md, DESIGN_QA.md):** tokens live in `globals.css`; Fraunces + Atkinson via `next/font`; display settings (larger text, high contrast) are a `ui` cookie read in the root layout. That makes every page dynamic. Sponsor landing is `/for-sponsors`; `/sponsor` stays the logged-in redirect. Claim tracker is new at `/track`. `/design` is a public, noindex component specimen.
+52. **Intake has no live dollar preview** (would release unreviewed results; DECISIONS 33). Revisit if you want one.
 
 ## Phase 1 status against the Definition of Done
 Done and tested in code or SQL: payments + idempotent webhook, intake + consent, rules engine (20 programs), packets (answers sheets), uploads + confirmed extraction, reviewer console, append-only ledger, sponsor dashboard + guarantee, reminders, kill dashboard, RLS proofs, legal drafts, compliance checklist, README.

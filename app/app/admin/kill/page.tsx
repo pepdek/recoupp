@@ -3,15 +3,15 @@ import { killReport, ratesFromEnv, type KillMetrics, type Light } from "@/lib/ki
 import { requireAdmin } from "@/lib/admin";
 
 const pct = (v: number | null) => (v === null ? "no data" : `${Math.round(v * 100)}%`);
-const dot: Record<Light, string> = { red: "bg-red-600", green: "bg-green-600", nodata: "bg-gray-400" };
+const word: Record<Light, [string, string]> = { red: ["Failing", "stamp-red"], green: ["Passing", "stamp-forest"], nodata: ["No data", ""] };
 
 function Card({ title, value, light, rule, children }: { title: string; value: string; light: Light; rule: string; children?: React.ReactNode }) {
   return (
-    <section className="rounded border p-4">
-      <h2 className="flex items-center gap-2 text-lg font-semibold"><span className={`size-3 rounded-full ${dot[light]}`} />{title}</h2>
-      <p className="mt-1 text-3xl font-semibold">{value}</p>
-      <p className="text-sm text-gray-600">Kill if {rule}</p>
-      {children && <div className="mt-2 text-sm text-gray-700">{children}</div>}
+    <section className="ticket">
+      <h2 className="flex flex-wrap items-center gap-3">{title} <span className={`stamp ${word[light][1]}`}>{word[light][0]}</span></h2>
+      <p className="mt-1">{value}</p>
+      <p className="text-sm muted">Kill if {rule}</p>
+      {children && <div className="mt-2 text-sm muted">{children}</div>}
     </section>
   );
 }
@@ -23,9 +23,9 @@ export default async function Kill() {
   const m = data as KillMetrics, rates = ratesFromEnv(), k = killReport(m, rates);
   const $ = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
   return (
-    <main className="mx-auto max-w-3xl space-y-4 p-6">
-      <h1 className="text-3xl font-semibold">Kill criteria</h1>
-      <p className="text-gray-600">Judge at day 90 with real volume; early numbers swing wildly. Red means the criterion is currently failing.</p>
+    <main className="wrap space-y-4 py-6">
+      <h1>Kill criteria</h1>
+      <p className="muted">Judge at day 90 with real volume; early numbers swing wildly. Red means the criterion is currently failing.</p>
       <Card title="Claim completion" value={pct(k.completion.value)} light={k.completion.light} rule="under 30% of recommended claims are submitted or beyond">
         {m.claims_completed} of {k.completion.n} claims moved past "prepared".
       </Card>

@@ -1,0 +1,10 @@
+Got your $149. Thank you.
+
+Stripe sends the official receipt separately.
+
+Next step: answer the questions about your household. It takes about 15 minutes, and you can stop and come back.
+
+Start the questions: https://example.test/intake
+
+--
+If we find under $1,000 a year in likely benefits, you get your $149 back.

@@ -1,3 +1,6 @@
+import { BRAND } from "./brand";
+import { renderEmail } from "./email";
+
 export type ReminderKind = "docs_missing" | "needs_info" | "renewal_30" | "renewal_7";
 export type ClaimRow = { id: string; household_id: string; program_id: string; status: string; renewal_due: string | null; created_at: string };
 
@@ -36,12 +39,13 @@ export function dueReminders(now: Date, claims: ClaimRow[], docCount: Map<string
 }
 
 export const message = (kind: ReminderKind, program: string, site: string) => {
-  const link = `${site}/plan`;
-  const m: Record<ReminderKind, [string, string]> = {
-    docs_missing: [`Documents for your ${program} application`, `You can finish your ${program} application faster by uploading your documents. Everything is private.\n\nUpload here: ${site}/documents`],
-    needs_info: [`The agency needs more information for ${program}`, `The agency asked for more information about your ${program} application. Please check your plan and send what they need.\n\n${link}`],
-    renewal_30: [`Your ${program} renews in about a month`, `It is almost time to renew ${program}. Renewing on time keeps your benefit from stopping.\n\n${link}`],
-    renewal_7: [`Your ${program} renewal is due this week`, `Your ${program} renewal is due within a week. Please renew now so your benefit doesn't stop.\n\n${link}`],
+  const m: Record<ReminderKind, { subject: string; heading: string; body: string; cta: [string, string] }> = {
+    docs_missing: { subject: `Papers for your ${program} application`, heading: "Your papers are the slow part.", body: `Upload what you have for ${program}. A photo from your phone works. Everything stays private.`, cta: ["Upload papers", `${site}/documents`] },
+    needs_info: { subject: `The agency wants more for ${program}`, heading: "The agency asked for more.", body: `They need more information on your ${program} application. Check your mail, then send them what they asked for.`, cta: ["See my plan", `${site}/plan`] },
+    renewal_30: { subject: `Your ${program} renews in about a month`, heading: "Renewal is a month away.", body: `Renew ${program} on time so it doesn't stop. It's easier to do it now than to restart later.`, cta: ["See my plan", `${site}/plan`] },
+    renewal_7: { subject: `Your ${program} renewal is due this week`, heading: "Renew this week.", body: `Your ${program} renewal is due within a week. Renew now so your benefit doesn't stop.`, cta: ["See my plan", `${site}/plan`] },
   };
-  return { subject: m[kind][0], text: `${m[kind][1]}\n\nThis is an automated reminder from Recoup. Reply to this email if you'd like us to stop sending reminders.` };
+  const x = m[kind];
+  const mail = renderEmail({ heading: x.heading, paragraphs: [x.body], cta: { label: x.cta[0], url: x.cta[1] }, footnote: `This is an automated reminder from ${BRAND}. Reply to this email if you'd like us to stop sending reminders.` });
+  return { subject: x.subject, text: mail.text, html: mail.html };
 };

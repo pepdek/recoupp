@@ -13,38 +13,38 @@ export default async function Admin() {
   ]);
   const old = (d: string) => (Date.now() - new Date(d).getTime()) / 864e5 > STALE_DAYS;
   return (
-    <main className="mx-auto max-w-5xl space-y-8 p-6">
-      <h1 className="text-3xl font-semibold">Admin</h1>
-      <p className="flex gap-4"><Link className="underline" href="/admin/kill">Kill-criteria dashboard</Link><Link className="underline" href="/review">Review queue</Link></p>
+    <main className="wrap space-y-8 py-6">
+      <h1>Admin</h1>
+      <p className="flex gap-4"><Link className="" href="/admin/kill">Kill-criteria dashboard</Link><Link className="" href="/review">Review queue</Link></p>
 
       <section>
-        <h2 className="text-xl font-semibold">Programs ({programs.length})</h2>
-        <p className="text-sm text-gray-600">Rules live in <code>/programs/*.yaml</code> in git: edit there and bump <code>last_verified</code> after re-checking the source. Unverified programs are never auto-recommended.</p>
-        <table className="mt-2 w-full text-left text-sm">
-          <thead><tr className="border-b"><th className="py-1">Program</th><th>Confidence</th><th>Last verified</th><th>Version</th></tr></thead>
+        <h2>Programs ({programs.length})</h2>
+        <p className="small muted">Rules live in <code>/programs/*.yaml</code> in git: edit there and bump <code>last_verified</code> after re-checking the source. Unverified programs are never auto-recommended.</p>
+        <table className="tbl mt-2">
+          <thead><tr><th>Program</th><th>Confidence</th><th>Last verified</th><th>Version</th></tr></thead>
           <tbody>{programs.map((p) => (
-            <tr key={p.id} className="border-b"><td className="py-1">{p.name}</td>
-              <td className={p.confidence === "verified" ? "text-green-700" : "text-amber-700"}>{p.confidence}</td>
-              <td className={old(p.last_verified) ? "font-semibold text-red-700" : ""}>{p.last_verified}{old(p.last_verified) && " (stale)"}</td><td className="font-mono">{p.version}</td></tr>
+            <tr key={p.id}><td>{p.name}</td>
+              <td className={p.confidence === "verified" ? "text-forest font-bold" : "font-bold"}>{p.confidence}</td>
+              <td className={old(p.last_verified) ? "text-stamp font-bold" : ""}>{p.last_verified}{old(p.last_verified) && " (stale)"}</td><td className="font-mono">{p.version}</td></tr>
           ))}</tbody>
         </table>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">Sponsors</h2>
-        <table className="mt-2 w-full text-left text-sm">
-          <thead><tr className="border-b"><th className="py-1">Name</th><th>Link</th><th>Fee</th><th>Minimum</th></tr></thead>
-          <tbody>{orgs?.map((o) => <tr key={o.id} className="border-b"><td className="py-1"><Link className="underline" href={`/sponsor/${o.slug}`}>{o.name}</Link></td><td className="font-mono">/s/{o.slug}</td><td>{$(o.fee_cents)}</td><td>{o.min_households}</td></tr>)}
-            {!orgs?.length && <tr><td colSpan={4} className="py-2 text-gray-500">None yet. Create one with scripts/sponsor-invoice.ts.</td></tr>}</tbody>
+        <h2>Sponsors</h2>
+        <table className="tbl mt-2">
+          <thead><tr><th>Name</th><th>Link</th><th>Fee</th><th>Minimum</th></tr></thead>
+          <tbody>{orgs?.map((o) => <tr key={o.id}><td><Link className="" href={`/sponsor/${o.slug}`}>{o.name}</Link></td><td className="font-mono">/s/{o.slug}</td><td>{$(o.fee_cents)}</td><td>{o.min_households}</td></tr>)}
+            {!orgs?.length && <tr><td colSpan={4} className="muted">None yet. Create one with scripts/sponsor-invoice.ts.</td></tr>}</tbody>
         </table>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">Payments (latest 50)</h2>
-        <table className="mt-2 w-full text-left text-sm">
-          <thead><tr className="border-b"><th className="py-1">Date</th><th>Offer</th><th>Email</th><th>Amount</th><th>Refunded</th><th>Status</th></tr></thead>
-          <tbody>{pay?.map((p) => <tr key={p.id} className="border-b"><td className="py-1">{p.created_at.slice(0, 10)}</td><td>{p.offer}</td><td>{p.email ?? "—"}</td><td>{$(p.amount_cents)}</td><td>{p.refunded_cents ? $(p.refunded_cents) : ""}</td><td>{p.status}</td></tr>)}
-            {!pay?.length && <tr><td colSpan={6} className="py-2 text-gray-500">No payments yet.</td></tr>}</tbody>
+        <h2>Payments (latest 50)</h2>
+        <table className="tbl mt-2">
+          <thead><tr><th>Date</th><th>Offer</th><th>Email</th><th>Amount</th><th>Refunded</th><th>Status</th></tr></thead>
+          <tbody>{pay?.map((p) => <tr key={p.id}><td>{p.created_at.slice(0, 10)}</td><td>{p.offer}</td><td>{p.email ?? "—"}</td><td>{$(p.amount_cents)}</td><td>{p.refunded_cents ? $(p.refunded_cents) : ""}</td><td>{p.status}</td></tr>)}
+            {!pay?.length && <tr><td colSpan={6} className="muted">No payments yet.</td></tr>}</tbody>
         </table>
       </section>
     </main>
