@@ -14,7 +14,9 @@
     "plan": "tsx scripts/plan.ts",
     "seed:sql": "tsx scripts/seed-sql.ts",
     "email:preview": "tsx scripts/email-preview.ts",
-    "check:headings": "tsx scripts/check-headings.ts"
+    "check:headings": "tsx scripts/check-headings.ts",
+    "check:launch": "tsx scripts/check-launch.ts",
+    "postbuild": "tsx scripts/check-launch.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

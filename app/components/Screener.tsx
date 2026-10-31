@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { evaluateAll, type Facts } from "@/lib/engine";
 import { buildFacts } from "@/lib/facts";
 import { COUNTIES } from "@/lib/intake";
@@ -31,51 +31,75 @@ function matches(f: { county: string; city: string; age: number; size: number; b
   return COPY.filter((c) => !(c.id === "orca_lift" && f.county !== "King") && [a, b].some((r) => ok(r.find((x) => x.program_id === c.id)?.status ?? "unlikely")));
 }
 
+type Ans = { county: string; city: string; age: string; size: string; income: string; medicare: string };
+const BLANK: Ans = { county: "", city: "", age: "", size: "", income: "", medicare: "" };
+const SIZE: [string, string][] = [["1", "Just one person"], ["2", "Two people"], ["3", "Three or more"]];
+const MED: [string, string][] = [["yes", "Yes"], ["no", "No"], ["unsure", "Not sure"]];
+
+function Choices({ name, value, set, opts }: { name: keyof Ans; value: string; set: (k: keyof Ans, v: string) => void; opts: [string, string][] }) {
+  return <div className="u-grid" style={{ gap: "var(--sp-1)" }}>{opts.map(([v, l]) => <label key={v} className="u-choice"><input type="radio" name={name} value={v} checked={value === v} onChange={() => set(name, v)} /><span>{l}</span></label>)}</div>;
+}
+
 export default function Screener({ forWho, nums }: { forWho: "me" | "parent"; nums: Record<string, number[]> }) {
-  const [res, setRes] = useState<ReturnType<typeof matches> | null>(null), started = useRef(false), top = useRef<HTMLDivElement>(null);
+  const [res, setRes] = useState<ReturnType<typeof matches> | null>(null), [step, setStep] = useState(0), [a, setA] = useState<Ans>(BLANK), started = useRef(false), top = useRef<HTMLHeadingElement>(null);
   const parent = forWho === "parent", your = parent ? "your parent's" : "your";
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const set = (k: keyof Ans, v: string) => { if (!started.current) { started.current = true; track("check_start", "/check"); } setA((x) => ({ ...x, [k]: v })); };
+  const STEPS = [
+    { q: `Which county ${parent ? "does your parent live in" : "do you live in"}?`, ok: !!a.county, body: (
+      <div className="u-stack">
+        <div><label className="u-label" htmlFor="county">County</label><select id="county" className="u-input" value={a.county} onChange={(e) => set("county", e.target.value)}><option value="" disabled>Choose one</option>{COUNTIES.map((c) => <option key={c}>{c}</option>)}</select></div>
+        <div><label className="u-label" htmlFor="city">City or town (optional)<span className="u-hint">Some utility discounts depend on the city.</span></label><input id="city" className="u-input" autoComplete="address-level2" value={a.city} onChange={(e) => set("city", e.target.value)} /></div>
+      </div>) },
+    { q: `${parent ? "How old is your parent" : "How old are you"}?`, ok: !!a.age, body: <Choices name="age" value={a.age} set={set} opts={AGE.map(([v, l]) => [v, l])} /> },
+    { q: "How many people live in the household?", ok: !!a.size, body: <Choices name="size" value={a.size} set={set} opts={SIZE} /> },
+    { q: "About how much does the household get each month, before taxes?", hint: "Add up Social Security, pensions and any other income.", ok: !!a.income, body: <Choices name="income" value={a.income} set={set} opts={INCOME.map(([v, l]) => [v, l])} /> },
+    { q: "Does anyone have Medicare?", ok: !!a.medicare, body: <Choices name="medicare" value={a.medicare} set={set} opts={MED} /> },
+  ] as { q: string; hint?: string; ok: boolean; body: React.ReactNode }[];
+  const last = step === STEPS.length - 1, cur = STEPS[step];
+  useEffect(() => { top.current?.focus(); }, [step, res]);
+  function next(e: React.FormEvent) {
     e.preventDefault();
-    const d = new FormData(e.currentTarget);
-    setRes(matches({ county: String(d.get("county")), city: String(d.get("city") ?? "").trim().toLowerCase(), age: AGE.find((a) => a[0] === d.get("age"))![2], size: Number(d.get("size")), band: INCOME.findIndex((i) => i[0] === d.get("income")), medicare: String(d.get("medicare")) }));
+    if (!cur.ok) return;
+    if (!last) return setStep(step + 1);
+    setRes(matches({ county: a.county, city: a.city.trim().toLowerCase(), age: AGE.find((x) => x[0] === a.age)![2], size: Number(a.size), band: INCOME.findIndex((i) => i[0] === a.income), medicare: a.medicare }));
     track("check_complete", "/check");
-    setTimeout(() => top.current?.focus(), 0);
+  }
+  if (!res) {
+    return (
+      <form method="dialog" onSubmit={next} className="u-stack" noValidate>
+        <div className="u-stack"><p className="u-small u-muted" id="prog">Step {step + 1} of {STEPS.length}</p>
+          <div className="u-progress" role="progressbar" aria-labelledby="prog" aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1}><i style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} /></div></div>
+        <fieldset className="u-step-q" style={{ marginTop: "var(--sp-3)" }}>
+          <legend><h2 ref={top} tabIndex={-1} style={{ fontSize: "var(--fs-h3)", outline: "none" }}>{cur.q}</h2>{cur.hint && <span className="u-hint u-small u-muted" style={{ display: "block", fontWeight: 400, marginTop: "var(--sp-1)" }}>{cur.hint}</span>}</legend>
+          <div style={{ marginTop: "var(--sp-2)" }}>{cur.body}</div>
+        </fieldset>
+        <div className="u-row" style={{ marginTop: "var(--sp-3)" }}>
+          {step > 0 && <button type="button" className="u-btn u-btn-secondary" onClick={() => setStep(step - 1)}>Back</button>}
+          <button className="u-btn u-btn-primary" disabled={!cur.ok}>{last ? "Show what may fit" : "Next"}</button>
+        </div>
+        <p className="u-small u-muted">This check runs in your browser. We don&apos;t save your answers.</p>
+      </form>
+    );
   }
   return (
-    <div>
-      <form method="dialog" onSubmit={onSubmit} onChange={() => { if (!started.current) { started.current = true; track("check_start", "/check"); } }} className="space-y-6">
-        <label className="field">Which county {parent ? "does your parent live in" : "do you live in"}?<select name="county" required defaultValue="" className="input"><option value="" disabled>Choose one</option>{COUNTIES.map((c) => <option key={c}>{c}</option>)}</select></label>
-        <label className="field">City or town (optional)<span className="hint">Some utility discounts depend on the city.</span><input name="city" autoComplete="address-level2" className="input" /></label>
-        <label className="field">{parent ? "How old is your parent" : "How old are you"}?<select name="age" required defaultValue="" className="input"><option value="" disabled>Choose one</option>{AGE.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
-        <label className="field">How many people live in the household?<select name="size" required defaultValue="" className="input"><option value="" disabled>Choose one</option><option value="1">1</option><option value="2">2</option><option value="3">3 or more</option></select></label>
-        <label className="field">About how much does the household get each month, before taxes?<span className="hint">Add up Social Security, pensions and any other income.</span><select name="income" required defaultValue="" className="input"><option value="" disabled>Choose one</option>{INCOME.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
-        <label className="field">Does anyone have Medicare?<select name="medicare" required defaultValue="" className="input"><option value="" disabled>Choose one</option><option value="yes">Yes</option><option value="no">No</option><option value="unsure">Not sure</option></select></label>
-        <button className="btn">Show what may fit</button>
-        <p className="small muted">This check runs in your browser. We don&apos;t save your answers.</p>
-      </form>
-
-      <div ref={top} tabIndex={-1} aria-live="polite" className="outline-none">
-        {res && (
-          <section className="mt-10 border-t border-ink/20 pt-8" aria-labelledby="res-h">
-            <h2 id="res-h">{res.length ? `${res.length} ${res.length === 1 ? "program" : "programs"} may fit ${your === "your" ? "you" : "your parent"}` : "Nothing in the quick check fits right now"}</h2>
-            <p className="mt-2">{res.length ? "These are programs you may qualify for. We can't tell for sure from six questions, and we don't add up a total here." : "That can change with more detail. The full report checks about twenty programs and looks at things this quick check can't, like bills and savings."}</p>
-            <ul className="mt-6">
-              {res.map((c) => (
-                <li key={c.id} className="border-t border-ink/20 py-4">
-                  <h3 className="flex items-center gap-2 !text-[1.375rem]"><Icon name="check" size={20} />{c.title} <span className="pill pill-amber ml-1">May qualify</span></h3>
-                  <p className="mt-1">{c.pays}{(nums[c.id] ?? []).map((n) => <a key={n} className="fn" href={`#src-${n}`} aria-label={`Source ${n}`}>{n}</a>)}</p>
-                  <p className="small mt-1"><Link href={`/programs/${c.slug}`}>Who qualifies and how to apply</Link></p>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 border-t border-ink/20 pt-6">
-              <h3>Want it checked properly?</h3>
-              <p className="mt-2">The full report checks all of them against {your} real answers, fills in each form, has a person review it, and follows each one to a decision. $149. Full refund if we find under $1,000 a year in likely benefits.</p>
-              <div className="mt-4 flex flex-wrap items-center gap-4"><CheckoutForm where="check" /><Link href="/#price" className="small">Read the terms</Link></div>
-            </div>
-          </section>
-        )}
+    <div aria-live="polite" className="u-stack">
+      <h2 ref={top} tabIndex={-1} style={{ outline: "none" }}>{res.length ? `${res.length} ${res.length === 1 ? "program" : "programs"} may fit ${parent ? "your parent" : "you"}` : "Nothing in the quick check fits right now"}</h2>
+      <p className="u-muted">{res.length ? "These are programs you may qualify for. We can't tell for sure from five questions, and we don't add up a total here." : "That can change with more detail. The full report checks about twenty programs and looks at things this quick check can't, like bills and savings."}</p>
+      <ul style={{ listStyle: "none", margin: 0, padding: 0, borderTop: "1px solid var(--border)" }}>
+        {res.map((c) => (
+          <li key={c.id} className="u-stack" style={{ padding: "var(--sp-2) 0", borderBottom: "1px solid var(--border)", marginTop: 0 }}>
+            <div className="u-row" style={{ justifyContent: "space-between" }}><h3>{c.title}</h3><span className="u-badge u-badge-wait"><Icon name="question" size={16} />May qualify</span></div>
+            <p className="u-prose">{c.pays}{(nums[c.id] ?? []).map((n) => <a key={n} className="u-cite" href={`#src-${n}`} aria-label={`Source ${n}`}>{n}</a>)}</p>
+            <p className="u-small"><Link href={`/programs/${c.slug}`}>Who qualifies and how to apply</Link></p>
+          </li>
+        ))}
+      </ul>
+      <div className="u-card u-raised u-stack">
+        <h3>Want it checked properly?</h3>
+        <p>The full report checks all of them against {your} real answers, fills in each form, has a person review it, and follows each one to a decision. $149. Full refund if we find under $1,000 a year in likely benefits.</p>
+        <div className="u-row"><CheckoutForm where="check" className="u-btn u-btn-primary" label="Get my full report" /><Link href="/pricing" className="u-btn u-btn-ghost">Read the terms</Link></div>
       </div>
+      <button type="button" className="u-btn u-btn-secondary" style={{ justifySelf: "start" }} onClick={() => { setRes(null); setStep(0); }}>Start over</button>
     </div>
   );
 }

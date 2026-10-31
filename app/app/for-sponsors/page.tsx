@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { EmailLink, Icon, money } from "@/components/ui";
+import Icon from "@/components/Icon";
+import { DemoTag, EmailLink4 } from "@/components/v4";
+import { money } from "@/components/ui";
 import { BRAND } from "@/lib/brand";
 import { SUPPORT_EMAIL } from "@/lib/contact";
 
-export const metadata: Metadata = { title: "For organizations: the founding pilot" };
+export const metadata: Metadata = { title: "For organizations: the founding pilot", description: "Give your members help with benefit applications and get a monthly report of verified dollars. Founding pilot for Washington organizations.", alternates: { canonical: "/for-sponsors" } };
 const mail = SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Founding Sponsor Pilot")}` : "#book";
 
 const rows: [string, number, number, number][] = [
@@ -12,100 +14,80 @@ const rows: [string, number, number, number][] = [
   ["Utility discounts", 11, 6, 2457],
   ["Lifeline", 9, 7, 777],
 ];
+const H = { fontSize: "var(--fs-h3)" } as const;
 
 export default function ForSponsors() {
   return (
-    <main className="dense">
-      {/* Signature: an oversized italic 5x, cropped by the edge of the page */}
-      <section className="relative overflow-hidden">
-        <p aria-hidden className="display pointer-events-none absolute -right-6 -top-10 select-none text-[clamp(16rem,52vw,40rem)] italic leading-none text-white/55 md:-right-16">5×</p>
-        <div className="wrap relative grid gap-8 py-10 md:grid-cols-[1.3fr_1fr] md:py-16">
-          <div className="glass pad">
-            <p className="small font-bold">Founding Sponsor Pilot · Washington State</p>
-            <h1 className="mt-3">We only count dollars with a <em>paper trail</em>.</h1>
-            <p className="mt-4 max-w-2xl text-[1.0625rem]">Your members get help with benefit applications. You get a monthly report of verified dollars: approval letters and confirmed receipts that our staff checked and logged. Estimates never count toward the guarantee.</p>
-            <p className="mt-5 flex flex-wrap items-center gap-4">
-              <a className="btn" href={mail}>Book a pilot</a>
-              <span className="small font-bold">{money(99)} per household · 100 households minimum</span>
-            </p>
+    <main>
+      <section className="u-hero" aria-labelledby="h1"><div className="u-wrap u-hero-grid">
+        <div className="u-stack">
+          <p className="u-eyebrow">Founding Sponsor Pilot · Washington State</p>
+          <h1 id="h1">We only count dollars with a paper trail.</h1>
+          <p className="u-muted">Your members get help with benefit applications. You get a monthly report of verified dollars: approval letters and confirmed receipts that our staff checked and logged. Estimates never count toward the guarantee.</p>
+          <div className="u-row" style={{ marginTop: "var(--sp-2)" }}><a className="u-btn u-btn-primary u-btn-lg" href={mail}>Book a pilot</a><span className="u-small" style={{ fontWeight: 600 }}>{money(99)} per household · 100 households minimum</span></div>
+        </div>
+        <div className="u-card u-raised u-stack">
+          <p className="u-eyebrow" style={{ display: "flex", gap: "var(--sp-1)", alignItems: "center" }}><Icon name="shield" size={18} />Recovered-Income Guarantee</p>
+          <h2>5× your fee, or we make it right.</h2>
+          <p className="u-small u-muted">If average verified yearly gain per enrolled household is under {money(495)} (5 × {money(99)}) after the first year, you choose a credit or a refund of the shortfall, capped at what you paid. Every household counts in the average.</p>
+        </div>
+      </div></section>
+
+      <section className="u-wrap u-section" aria-labelledby="rep">
+        <div className="u-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(18rem, 1fr))", gap: "var(--sp-6)" }}>
+          <div className="u-stack">
+            <p className="u-eyebrow">Proof</p><h2 id="rep">The monthly report</h2>
+            <p className="u-muted">A PDF and a CSV, plus a live dashboard. Programs with fewer than 5 claims are hidden so nobody can be picked out.</p>
+            <p><DemoTag /> <span className="u-small u-muted">Made-up numbers for a made-up group.</span></p>
           </div>
-          <div className="glass pad self-end">
-            <p className="small flex items-center gap-2 font-bold"><Icon name="shield" size={18} />Recovered-Income Guarantee</p>
-            <p className="display mt-2 text-4xl leading-tight">5× your fee, or we make it <em>right</em>.</p>
-            <p className="small mt-3">If average verified yearly gain per enrolled household is under {money(495)} (5 × {money(99)}) after the first year, you choose a credit or a refund of the shortfall, capped at what you paid. Every household counts in the average, including those with no gain. Agencies make the final decisions, and we can't promise approvals.</p>
+          <div className="u-stack" style={{ gridColumn: "span 2" }}>
+            <div className="u-card"><p className="u-small" style={{ fontWeight: 600 }}>Average verified a year per household · target {money(495)}</p>
+              <p className="u-figure" style={{ marginTop: "var(--sp-1)" }}>{money(313)} <span className="u-small u-muted" style={{ fontFamily: "var(--font-ui)" }}>63 of 100 enrolled</span></p>
+              <p className="u-small u-muted" style={{ marginTop: "var(--sp-1)" }}>Below target. Decisions take weeks, so early months run low. Estimated, not verified: {money(61204)}.</p></div>
+            <table className="u-table"><caption className="sr-only">Sample claims by program</caption>
+              <thead><tr><th>Program</th><th className="n">Claims</th><th className="n">Verified</th><th className="n">Verified a year</th></tr></thead>
+              <tbody>{rows.map(([n, c, v, d]) => <tr key={n}><td data-l="Program">{n}</td><td data-l="Claims" className="n">{c}</td><td data-l="Verified" className="n">{v}</td><td data-l="Verified a year" className="n">{money(d)}</td></tr>)}</tbody></table>
           </div>
         </div>
       </section>
 
-      <section className="wrap mt-10" aria-labelledby="rep">
-        <div className="glass pad grid gap-8 md:grid-cols-[1fr_1.7fr]">
-          <div>
-            <p className="eyebrow">Proof</p>
-            <h2 id="rep">The monthly report</h2>
-            <p className="mt-3">A PDF and a CSV, plus a live dashboard. Programs with fewer than 5 claims are hidden so nobody can be picked out.</p>
-            <p className="mt-3"><span className="pill pill-amber"><Icon name="alert" size={16} />Demo data</span> <span className="small">Made-up numbers for a made-up group.</span></p>
-          </div>
-          <div className="stack">
-            <div className="cheque">
-              <p className="small font-bold">Average verified a year per household · target {money(495)}</p>
-              <div className="line mt-1"><span className="amount">{money(313)}</span><span className="small font-bold">63 of 100 enrolled</span></div>
-              <p className="small muted mt-2">Below target. Decisions take weeks, so early months run low. Estimated, not verified: {money(61204)}.</p>
-            </div>
-            <table className="tbl">
-              <caption className="sr-only">Sample claims by program</caption>
-              <thead><tr><th>Program</th><th className="num">Claims</th><th className="num">Verified</th><th className="num">Verified a year</th></tr></thead>
-              <tbody>{rows.map(([n, c, v, d]) => <tr key={n}><td>{n}</td><td className="num">{c}</td><td className="num">{v}</td><td className="num">{money(d)}</td></tr>)}</tbody>
-            </table>
-          </div>
-        </div>
+      <section className="u-band" aria-labelledby="link"><div className="u-wrap u-section u-grid u-cols-2" style={{ gap: "var(--sp-6)" }}>
+        <div className="u-stack"><p className="u-eyebrow">Enrollment</p><h2 id="link">Your own link and QR code</h2>
+          <p className="u-muted">Members open a page with your name on it, then answer the questions. We run the review. Put the link in a newsletter. Print the QR code on a flyer.</p>
+          <p className="u-muted">Members choose whether you see their individual results. The box is unchecked by default.</p></div>
+        <ol className="u-list" style={{ alignContent: "start" }}>
+          {[["qr", "You get a link and QR code"], ["doc", "Members answer, about 15 minutes"], ["shield", "We review every result"], ["calendar", "You get the report each month"]].map(([i, t]) => <li key={t} className="u-card" style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)", padding: "var(--sp-2)" }}><Icon name={i} size={24} /><span>{t}</span></li>)}
+        </ol>
+      </div></section>
+
+      <section className="u-wrap u-section" aria-labelledby="trust">
+        <div className="u-head"><p className="u-eyebrow">Privacy</p><h2 id="trust">What we collect and who sees it</h2></div>
+        <ul className="u-list u-grid u-cols-2" style={{ gap: "var(--sp-2) var(--sp-6)" }}>
+          {[
+            "No Social Security numbers, ever. Our sheets leave a blank line and the member writes it in.",
+            "You see totals. Rows under 5 are hidden. Individual results only if the member ticks the share box.",
+            "Every table is locked down by row, so one household can't read another. We tested that in the database.",
+            "Documents sit in private storage. Links to view them expire after 5 minutes.",
+            "Members can download or delete their data from their account page.",
+            "Our log of verified outcomes has no names and can't be edited, only added to.",
+          ].map((t) => <li key={t}><Icon name="lock" size={20} /><span>{t}</span></li>)}
+        </ul>
+        <p className="u-small u-muted" style={{ marginTop: "var(--sp-3)" }}>The Sponsor Agreement is available on request. We are still having our legal drafts reviewed by an attorney, so ask us before you sign anything.</p>
       </section>
 
-      <section className="wrap mt-10" aria-labelledby="link">
-        <div className="glass pad grid gap-8 md:grid-cols-2">
-          <div>
-            <p className="eyebrow">Enrollment</p>
-            <h2 id="link">Your own link and QR code</h2>
-            <p className="mt-3">Members open a page with your name on it, then answer the questions. We run the review. Put the link in a newsletter. Print the QR code on a flyer.</p>
-            <p className="mt-3">Members choose whether you see their individual results. The box is unchecked by default.</p>
-          </div>
-          <ol className="ticket stack">
-            {[["qr", "You get a link and QR code"], ["doc", "Members answer, about 15 minutes"], ["shield", "We review every result"], ["calendar", "You get the report each month"]].map(([i, t]) => <li key={t} className="flex items-center gap-3"><Icon name={i} /><span className="font-bold">{t}</span></li>)}
-          </ol>
+      <section id="book" className="u-band" aria-labelledby="pay"><div className="u-wrap u-section" style={{ scrollMarginTop: "5rem" }}>
+        <div className="u-head"><p className="u-eyebrow">Next step</p><h2 id="pay">Book a pilot and pay</h2></div>
+        <div className="u-grid u-cols-3">
+          <div className="u-card"><p className="u-price-amt">{money(9900)}</p><p className="u-small u-muted">100 households × {money(99)}</p></div>
+          <div className="u-card"><p className="u-price-amt">{money(4950)}</p><p className="u-small u-muted">First invoice, now. By bank transfer (ACH) or card</p></div>
+          <div className="u-card"><p className="u-price-amt">{money(4950)}</p><p className="u-small u-muted">Second invoice, when household 50 enrolls</p></div>
         </div>
-      </section>
-
-      <section className="wrap mt-10" aria-labelledby="trust">
-        <div className="glass pad">
-          <p className="eyebrow">Privacy</p>
-          <h2 id="trust">What we collect and who sees it</h2>
-          <ul className="mt-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
-            {[
-              "No Social Security numbers, ever. Our sheets leave a blank line and the member writes it in.",
-              "You see totals. Rows under 5 are hidden. Individual results only if the member ticks the share box.",
-              "Every table is locked down by row, so one household can't read another. We tested that in the database.",
-              "Documents sit in private storage. Links to view them expire after 5 minutes.",
-              "Members can download or delete their data from their account page.",
-              "Our log of verified outcomes has no names and can't be edited, only added to.",
-            ].map((t) => <li key={t} className="flex gap-3"><Icon name="lock" size={20} /><span>{t}</span></li>)}
-          </ul>
-          <p className="small mt-4">The Sponsor Agreement is available on request. We are still having our legal drafts reviewed by an attorney, so ask us before you sign anything.</p>
+        <div className="u-stack" style={{ marginTop: "var(--sp-3)" }}>
+          <p><a className="u-btn u-btn-primary" href={mail}>{SUPPORT_EMAIL ? "Email us to start" : "Contact us to start"}</a></p>
+          <p className="u-prose">Write to <EmailLink4 subject="Founding Sponsor Pilot" /></p>
+          <p className="u-small u-muted">We set up your link, your dashboard login and the first invoice. {BRAND} is a paperwork service, not a law firm or financial adviser.</p>
         </div>
-      </section>
-
-      <section id="book" className="wrap mt-10 scroll-mt-20" aria-labelledby="pay">
-        <div className="glass pad">
-          <p className="eyebrow">Next step</p>
-          <h2 id="pay">Book a pilot and pay</h2>
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <div className="ticket"><p className="display text-4xl">{money(9900)}</p><p className="small">100 households × {money(99)}</p></div>
-            <div className="ticket"><p className="display text-4xl">{money(4950)} now</p><p className="small">First invoice, by bank transfer (ACH) or card</p></div>
-            <div className="ticket"><p className="display text-4xl">{money(4950)} later</p><p className="small">Second invoice when household 50 enrolls</p></div>
-          </div>
-          <p className="mt-5"><a className="btn" href={mail}>{SUPPORT_EMAIL ? "Email us to start" : "Contact us to start"}</a></p>
-          <p className="mt-3">Write to <EmailLink subject="Founding Sponsor Pilot" /></p>
-          <p className="small mt-3">We set up your link, your dashboard login and the first invoice. {BRAND} is a paperwork service, not a law firm or financial adviser.</p>
-        </div>
-      </section>
+      </div></section>
     </main>
   );
 }

@@ -1,4 +1,6 @@
+import { useId } from "react";
 import SourcesBlock from "@/components/SourcesBlock";
+import { CHECKED } from "@/lib/site";
 
 // Numbered sources, APA 7 format, shown in an accordion near the footer. In text, a citation is just a number that links to its entry.
 // Numbers follow order of first appearance on each page: a page lists its source ids in that order and cites them with <Cite id=.../>.
@@ -30,12 +32,22 @@ export const SOURCES: Record<string, Source> = {
 /** Per-page citations. List ids in order of first appearance; <Cite id="x" /> prints that number as a link, <Block /> prints the accordion. */
 export function cites(ids: string[]) {
   const n = (id: string) => { const i = ids.indexOf(id); if (i < 0) throw new Error(`source "${id}" is not in this page's list`); return i + 1; };
-  function Cite({ id }: { id: string | string[] }) {
-    const list = Array.isArray(id) ? id : [id];
-    return <span className="cg">{list.map((x, k) => <span key={x}>{k > 0 && <span className="fn-sep">,</span>}<a className="fn" href={`#src-${n(x)}`} aria-label={`Source ${n(x)}`}>{n(x)}</a></span>)}</span>;
+  function One({ id }: { id: string }) {
+    const pid = useId(), num = n(id), s = SOURCES[id];
+    const it = s.parts.find((p) => typeof p !== "string") as { i: string } | undefined;
+    const name = it ? it.i : (s.parts[0] as string).replace(/\.$/, "");
+    return (
+      <>
+        <button type="button" className="u-cite" popoverTarget={pid} aria-label={`Source ${num}: ${name}`}>{num}</button>
+        <span id={pid} popover="auto" className="u-pop"><b>{name}</b><br /><span className="u-muted">Checked {s.retrieved?.replace(/^Retrieved /, "") ?? CHECKED}.</span> <a href={`#src-${num}`}>See source {num}</a></span>
+      </>
+    );
   }
-  function Block() {
-    return <SourcesBlock items={ids.map((id, i) => ({ n: i + 1, ...SOURCES[id] }))} />;
+  function Cite({ id }: { id: string | string[] }) {
+    return <>{(Array.isArray(id) ? id : [id]).map((x) => <One key={x} id={x} />)}</>;
+  }
+  function Block({ open }: { open?: boolean }) {
+    return <SourcesBlock defaultOpen={open} items={ids.map((id, i) => ({ n: i + 1, ...SOURCES[id] }))} />;
   }
   return { Cite, Block };
 }

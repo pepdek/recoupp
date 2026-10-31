@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Icon, { ICONS } from "@/components/Icon";
 import V4Tabs from "@/components/V4Tabs";
-import { Check, Chevron, Cite4, DemoTag, Footer4, Header4, STATUS_KEYS, Status } from "@/components/v4";
+import { Check, Chevron, Cite4, DemoTag, STATUS_KEYS, Status } from "@/components/v4";
 import { LIFELINE_MONTHLY, PART_B_MONTHLY, PART_B_YEARLY } from "@/lib/site";
 import "../v4.css";
 
@@ -55,9 +55,7 @@ function Testimonial({ verified, quote, who }: { verified: boolean; quote?: stri
 
 export default function Design() {
   return (
-    <div className="v4-root">
-      <Header4 current="/design" />
-      <main id="main">
+    <main>
         <div className="u-hero"><div className="u-wrap u-section u-stack">
           <p className="u-eyebrow">Design system v4</p>
           <h1>One set of parts, used on every page</h1>
@@ -223,8 +221,6 @@ export default function Design() {
               <SrcRow n={4} a="Centers for Medicare & Medicaid Services. (2025, November 14)." t="2026 Medicare Parts A & B premiums and deductibles [Fact sheet]" u="https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles" />
             </ol></details></div>
         </section>
-      </main>
-      <Footer4 />
-    </div>
+    </main>
   );
 }

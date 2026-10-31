@@ -4,8 +4,8 @@ import type { Source } from "@/lib/sources";
 
 type Item = Source & { n: number };
 /** APA-style source list in an accordion. A numbered citation link anywhere on the page opens it and jumps to its entry. */
-export default function SourcesBlock({ items }: { items: Item[] }) {
-  const [open, setOpen] = useState(false), [hit, setHit] = useState<string | null>(null);
+export default function SourcesBlock({ items, defaultOpen = false }: { items: Item[]; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen), [hit, setHit] = useState<string | null>(null);
   useEffect(() => {
     const go = () => {
       const h = location.hash;
@@ -16,14 +16,14 @@ export default function SourcesBlock({ items }: { items: Item[] }) {
     const click = (e: MouseEvent) => {
       const a = (e.target as Element).closest?.('a[href^="#src-"]');
       if (!a) return;
-      e.preventDefault(); history.replaceState(null, "", a.getAttribute("href")!); go();
+      e.preventDefault(); document.querySelectorAll(":popover-open").forEach((p) => (p as HTMLElement).hidePopover()); history.replaceState(null, "", a.getAttribute("href")!); go();
     };
     go(); addEventListener("hashchange", go); document.addEventListener("click", click);
     return () => { removeEventListener("hashchange", go); document.removeEventListener("click", click); };
   }, []);
   return (
-    <details id="sources" className="sources" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
-      <summary><span>Sources ({items.length})</span><span aria-hidden className="sources-mark">{open ? "−" : "+"}</span></summary>
+    <div className="u-acc u-sources"><details id="sources" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+      <summary><h2 style={{ font: "600 var(--fs-h3)/1.3 var(--font-ui)" }}>Sources ({items.length})</h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M6 9l6 6 6-6" /></svg></summary>
       <ol>
         {items.map((s) => (
           <li key={s.n} id={`src-${s.n}`} tabIndex={-1} data-hit={hit === `src-${s.n}` ? "" : undefined}>
@@ -36,6 +36,6 @@ export default function SourcesBlock({ items }: { items: Item[] }) {
           </li>
         ))}
       </ol>
-    </details>
+    </details></div>
   );
 }

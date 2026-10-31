@@ -12,19 +12,13 @@ const STEPS: [string, string, string, string][] = [
 export default function Audience({ initial }: { initial: Who }) {
   const [who, setWho] = useState<Who>(initial);
   return (
-    <div>
-      <div role="group" aria-label="Who is this for" className="mt-5 inline-flex gap-1 rounded-full bg-ink/10 p-1">
-        {(["me", "parent"] as const).map((w) => (
-          <button key={w} type="button" aria-pressed={who === w} onClick={() => setWho(w)} className={`btn btn-sm ${who === w ? "" : "btn-quiet !border-transparent"}`}>{w === "me" ? "For me" : "For my parent"}</button>
-        ))}
+    <div className="u-stack">
+      <div role="group" aria-label="Who is this for" className="u-seg">
+        {(["me", "parent"] as const).map((w) => <button key={w} type="button" aria-pressed={who === w} onClick={() => setWho(w)}>{w === "me" ? "For me" : "For my parent"}</button>)}
       </div>
-      <ol className="cols-4 mt-8 grid gap-6 md:grid-cols-4">
-        {STEPS.map(([name, me, parent], i) => (
-          <li key={name}>
-            <p className="display text-6xl leading-none text-link" aria-hidden>{i + 1}</p>
-            <h3 className="mt-2">{name}</h3>
-            <p className="small mt-2">{who === "me" ? me : parent}</p>
-          </li>
+      <ol className="u-steps-ol" style={{ marginTop: "var(--sp-3)" }}>
+        {STEPS.map(([name, me, parent]) => (
+          <li key={name}><h3>{name}</h3><p className="u-muted" style={{ marginTop: "var(--sp-1)" }}>{who === "me" ? me : parent}</p></li>
         ))}
       </ol>
     </div>

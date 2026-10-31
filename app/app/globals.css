@@ -54,22 +54,15 @@ html[data-calm] {
 }
 html[data-hc] { --color-ink: #000; --color-ink-2: #2b231e; --input-border: #000; --edge-top: #000; --edge-bot: #000; --border-w: 3px; --border-c: #000; --grain: 0; }
 
-html { overflow-x: clip; background: var(--color-base); }
-body { font-family: var(--font-sans); font-size: var(--text); line-height: 1.5; color: var(--color-ink); font-feature-settings: "tnum" 0; -webkit-font-smoothing: antialiased; }
-h1, h2, h3, .display { font-family: var(--font-display); font-weight: 400; line-height: 1.04; letter-spacing: -0.02em; }
-h1 { font-size: clamp(2.75rem, 1.6rem + 4.6vw, 5.25rem); letter-spacing: -0.03em; }
-h2 { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.25rem); }
-h3 { font-size: 1.625rem; }
+html { overflow-x: clip; background: #fff; }
+.display { font-family: var(--font-display); font-weight: 400; line-height: 1.04; letter-spacing: -0.02em; }
 .tool h1 { font-size: 2.25rem; } .tool h2 { font-size: 1.75rem; } .tool h3 { font-size: 1.25rem; }
-em, .accent { font-family: var(--font-display); font-style: italic; }
-a { color: var(--color-link); text-decoration-line: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
-a:hover { color: var(--color-ink); }
+em { font-style: italic; } .accent { font-family: var(--font-display); font-style: italic; }
 .small, small { font-size: var(--small); }
 .muted { color: var(--color-ink-2); }
 .num-tab, .tbl .num, .tool { font-variant-numeric: tabular-nums; }
 
 /* Focus ring: ink + marigold halo, visible over glass, solid and the coral button */
-:focus-visible { outline: 3px solid #1b1714; outline-offset: 2px; box-shadow: 0 0 0 6px #f4b93e; border-radius: 12px; }
 
 /* ===== Field: hand-placed, blurred color. Plain gradients, no images, no backdrop-filter ===== */
 .paint { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--color-base); }

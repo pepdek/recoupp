@@ -3,7 +3,7 @@ export {};
 //   npm run build && npx next start -p 3112 &  then:  BASE=http://localhost:3112 npm run check:headings
 // Fails (exit 1) if a page doesn't have exactly one H1, or a heading level is skipped going down (H1 to H3).
 const BASE = process.env.BASE ?? "http://localhost:3112";
-const ROUTES = ["/", "/check", "/about", "/contact", "/programs", "/programs/medicare-savings-program", "/programs/basic-food", "/for-sponsors", "/privacy", "/terms", "/accessibility", "/login"];
+const ROUTES = ["/", "/how-it-works", "/pricing", "/check", "/about", "/contact", "/programs", "/programs/medicare-savings-program", "/programs/basic-food", "/for-sponsors", "/privacy", "/terms", "/accessibility", "/sources", "/login", "/design"];
 let bad = 0;
 async function main() {
 for (const r of ROUTES) {
