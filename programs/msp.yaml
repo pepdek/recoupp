@@ -7,9 +7,9 @@ last_verified: 2026-10-30
 source_urls:
   - https://app.leg.wa.gov/WAC/default.aspx?cite=182-517-0100   # tiers (% FPL) and "no resource test", read 2026-10-30
   - https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines   # 2026 FPL, read 2026-10-30
+  - https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles   # Part B premium $202.90 (2026), read 2026-10-31
   - https://www.hca.wa.gov/free-or-low-cost-health-care/i-help-others-apply-and-access-apple-health/program-standard-income-and-resources   # HCA dollar table: page too large to read via our fetcher; human to confirm dollar limits match FPL math
-unverified_inputs:
-  - part_b_premium_monthly   # $202.90 for 2026 seen only in secondary sources; confirm at cms.gov
+unverified_inputs: []   # part_b_premium_monthly ($202.90) verified against the CMS fact sheet of 2025-11-14, read 2026-10-31
 renewal: Annual redetermination by HCA
 documents:
   - Medicare card (red, white and blue)

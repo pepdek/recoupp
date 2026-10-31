@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Icon, money } from "@/components/ui";
+import { EmailLink, Icon, money } from "@/components/ui";
 import { BRAND } from "@/lib/brand";
+import { SUPPORT_EMAIL } from "@/lib/contact";
 
 export const metadata: Metadata = { title: "For organizations: the founding pilot" };
-const contact = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
-const mail = contact ? `mailto:${contact}?subject=${encodeURIComponent("Founding Sponsor Pilot")}` : "#book";
+const mail = SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Founding Sponsor Pilot")}` : "#book";
 
 const rows: [string, number, number, number][] = [
   ["Medicare Savings Program", 14, 5, 12175],
@@ -40,6 +40,7 @@ export default function ForSponsors() {
       <section className="wrap mt-10" aria-labelledby="rep">
         <div className="glass pad grid gap-8 md:grid-cols-[1fr_1.7fr]">
           <div>
+            <p className="eyebrow">Proof</p>
             <h2 id="rep">The monthly report</h2>
             <p className="mt-3">A PDF and a CSV, plus a live dashboard. Programs with fewer than 5 claims are hidden so nobody can be picked out.</p>
             <p className="mt-3"><span className="pill pill-amber"><Icon name="alert" size={16} />Demo data</span> <span className="small">Made-up numbers for a made-up group.</span></p>
@@ -62,6 +63,7 @@ export default function ForSponsors() {
       <section className="wrap mt-10" aria-labelledby="link">
         <div className="glass pad grid gap-8 md:grid-cols-2">
           <div>
+            <p className="eyebrow">Enrollment</p>
             <h2 id="link">Your own link and QR code</h2>
             <p className="mt-3">Members open a page with your name on it, then answer the questions. We run the review. Put the link in a newsletter. Print the QR code on a flyer.</p>
             <p className="mt-3">Members choose whether you see their individual results. The box is unchecked by default.</p>
@@ -74,6 +76,7 @@ export default function ForSponsors() {
 
       <section className="wrap mt-10" aria-labelledby="trust">
         <div className="glass pad">
+          <p className="eyebrow">Privacy</p>
           <h2 id="trust">What we collect and who sees it</h2>
           <ul className="mt-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
             {[
@@ -91,13 +94,15 @@ export default function ForSponsors() {
 
       <section id="book" className="wrap mt-10 scroll-mt-20" aria-labelledby="pay">
         <div className="glass pad">
+          <p className="eyebrow">Next step</p>
           <h2 id="pay">Book a pilot and pay</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <div className="ticket"><p className="display text-4xl">{money(9900)}</p><p className="small">100 households × {money(99)}</p></div>
             <div className="ticket"><p className="display text-4xl">{money(4950)} now</p><p className="small">First invoice, by bank transfer (ACH) or card</p></div>
             <div className="ticket"><p className="display text-4xl">{money(4950)} later</p><p className="small">Second invoice when household 50 enrolls</p></div>
           </div>
-          <p className="mt-5"><a className="btn" href={mail}>{contact ? "Email us to start" : "Contact us to start"}</a></p>
+          <p className="mt-5"><a className="btn" href={mail}>{SUPPORT_EMAIL ? "Email us to start" : "Contact us to start"}</a></p>
+          <p className="mt-3">Write to <EmailLink subject="Founding Sponsor Pilot" /></p>
           <p className="small mt-3">We set up your link, your dashboard login and the first invoice. {BRAND} is a paperwork service, not a law firm or financial adviser.</p>
         </div>
       </section>

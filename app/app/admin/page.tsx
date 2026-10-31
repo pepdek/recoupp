@@ -7,15 +7,22 @@ const STALE_DAYS = 365;
 
 export default async function Admin() {
   const { sb } = await requireAdmin();
-  const [{ data: pay }, { data: orgs }] = await Promise.all([
+  const [{ data: pay }, { data: orgs }, { data: funnel }] = await Promise.all([
     sb.from("payments").select("id, offer, email, amount_cents, refunded_cents, status, created_at, org_id").order("created_at", { ascending: false }).limit(50),
     sb.from("organizations").select("id, name, slug, fee_cents, min_households, created_at"),
+    sb.rpc("site_funnel", { p_days: 30 }),
   ]);
   const old = (d: string) => (Date.now() - new Date(d).getTime()) / 864e5 > STALE_DAYS;
   return (
     <main className="wrap space-y-8 py-6">
       <h1>Admin</h1>
       <p className="flex gap-4"><Link className="" href="/admin/kill">Kill-criteria dashboard</Link><Link className="" href="/review">Review queue</Link></p>
+
+      <section>
+        <h2>Public site funnel (last 30 days)</h2>
+        <p className="small muted">Counts only: no names, emails or answers. Paid checkouts are in Payments below.</p>
+        <table className="tbl mt-2"><thead><tr><th>Event</th><th className="num">Count</th></tr></thead><tbody>{(funnel as { name: string; events: number }[] | null)?.map((f) => <tr key={f.name}><td>{f.name}</td><td className="num">{f.events}</td></tr>)}{!funnel?.length && <tr><td colSpan={2} className="muted">No events yet.</td></tr>}</tbody></table>
+      </section>
 
       <section>
         <h2>Programs ({programs.length})</h2>

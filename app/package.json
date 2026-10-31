@@ -9,11 +9,12 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:rls": "node --env-file=.env.local node_modules/vitest/vitest.mjs run tests/rls.test.ts",
-    "prebuild": "tsx scripts/build-programs.ts",
+    "prebuild": "tsx scripts/build-programs.ts && tsx scripts/build-legal.ts",
     "pretest": "tsx scripts/build-programs.ts",
     "plan": "tsx scripts/plan.ts",
     "seed:sql": "tsx scripts/seed-sql.ts",
-    "email:preview": "tsx scripts/email-preview.ts"
+    "email:preview": "tsx scripts/email-preview.ts",
+    "check:headings": "tsx scripts/check-headings.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

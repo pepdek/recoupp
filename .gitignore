@@ -1,3 +1,4 @@
 # Local Netlify folder
 .netlify
 app/lib/programs.generated.json
+app/lib/legal.generated.json

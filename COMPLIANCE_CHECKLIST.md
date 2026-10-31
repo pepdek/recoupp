@@ -27,3 +27,11 @@ Not legal advice and no answers assumed. Each item is a question to resolve; Str
 - Per-program "may we help" flags that can turn a program off (item 2-3).
 - Business-associate-ready logging, access controls, and subprocessors list (item 5, 8).
 - Consent-text versioning is in place (`2026-10-v1`); new wording needs a new version and re-consent where required (item 6-7).
+
+## Added with the v3 homepage (Oct 31, 2026), questions for the attorney
+- **Marketing claims.** "Many people who qualify aren't getting it" and "More than 4 in 10 people who qualify for help with Medicare costs aren't enrolled" rest on one national study (JAMA Network Open, 2025). Is that sourcing and wording enough for Washington advertising rules?
+- **Free check.** It runs in the browser and stores nothing, and it shows "may qualify" lists with no personal total. Does naming specific programs for a visitor's answers count as benefits counseling or eligibility advice under Washington rules?
+- **Naming free services.** The page names BenefitsCheckUp (NCOA), SHIBA (Washington OIC) and Area Agencies on Aging. Do we need permission, or any disclaimer about not being affiliated?
+- **Public funnel events.** We count page views, button clicks and free-check starts and finishes with no identifiers (table `site_events`). Does this need disclosure in the privacy policy?
+- **Accessibility statement.** It says what has and hasn't been tested. Review the wording and whether a formal conformance claim is needed.
+- **Refund line.** The page repeats the $149 and $1,000-a-year terms; confirm they match the Terms once drafted.
