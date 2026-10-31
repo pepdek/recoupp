@@ -6,6 +6,7 @@ export type LedgerEntry = { claim_id: string; kind: "estimated" | "approved" | "
  */
 export function verifiedByClaim(entries: LedgerEntry[]) {
   const out = new Map<string, number>();
-  for (const e of [...entries].filter((x) => x.kind !== "estimated").sort((a, b) => a.created_at.localeCompare(b.created_at))) out.set(e.claim_id, Number(e.annual_value));
+  // same-instant tie: received sorts after approved, matching the SQL (`kind desc`)
+  for (const e of [...entries].filter((x) => x.kind !== "estimated").sort((a, b) => a.created_at.localeCompare(b.created_at) || a.kind.localeCompare(b.kind))) out.set(e.claim_id, Number(e.annual_value));
   return out;
 }

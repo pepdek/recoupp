@@ -46,4 +46,10 @@ describe("ledger verification", () => {
     expect(m.has("b")).toBe(false);
     expect(m.get("c")).toBe(1200);
   });
+  it("same-instant approved and received: received wins, regardless of input order", () => {
+    for (const order of [["approved", "received"], ["received", "approved"]] as const) {
+      const m = verifiedByClaim(order.map((k) => e("a", k, k === "received" ? 2300 : 2400, "2026-03-01")));
+      expect(m.get("a")).toBe(2300);
+    }
+  });
 });

@@ -7,16 +7,16 @@ import { getCtx } from "@/lib/household";
 const REL = ["self", "family", "caseworker", "other"] as const;
 
 export async function startIntake(fd: FormData) {
-  const { sb, user, household } = await getCtx("/intake");
+  const { sb, household } = await getCtx("/intake");
+  const org = String(fd.get("org") ?? "");
+  const back = `/intake${org ? `?org=${encodeURIComponent(org)}` : ""}`;
   if (household) redirect("/intake");
-  if (fd.get("consent") !== "on") redirect("/intake?error=consent");
+  if (fd.get("consent") !== "on") redirect(`${back}${org ? "&" : "?"}error=consent`);
   const rel = z.enum(REL).safeParse(fd.get("relationship"));
-  if (!rel.success) redirect("/intake?error=relationship");
-  const { data: h, error } = await sb.from("households").insert({ owner_id: user.id, relationship: rel.data }).select("id").single();
+  if (!rel.success) redirect(`${back}${org ? "&" : "?"}error=relationship`);
+  // One server-side function writes household, org link and consent together; clients can't attach an org themselves.
+  const { error } = await sb.rpc("create_household", { p_relationship: rel.data, p_org_slug: org, p_consent_version: CONSENT_VERSION, p_share: fd.get("share") === "on" });
   if (error) throw error;
-  const c = await sb.from("consents").insert({ household_id: h.id, user_id: user.id, version: CONSENT_VERSION });
-  if (c.error) throw c.error;
-  await sb.rpc("log_event", { p_action: "consent.accepted", p_entity: "household", p_entity_id: h.id, p_detail: { version: CONSENT_VERSION, relationship: rel.data } });
   redirect("/intake/members");
 }
 

@@ -3,9 +3,10 @@ import Link from "next/link";
 import { getCtx } from "@/lib/household";
 import { startIntake } from "./actions";
 
-export default async function Intake({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { error } = await searchParams;
-  const { household } = await getCtx("/intake");
+export default async function Intake({ searchParams }: { searchParams: Promise<{ error?: string; org?: string }> }) {
+  const { error, org } = await searchParams;
+  const { sb, household } = await getCtx(`/intake${org ? `?org=${encodeURIComponent(org)}` : ""}`);
+  const sponsor = org ? (await sb.rpc("org_public", { p_slug: org })).data?.[0] : null;
   if (household?.status === "in_progress") redirect(`/intake/${household.step}`);
   if (household) {
     return (
@@ -21,6 +22,7 @@ export default async function Intake({ searchParams }: { searchParams: Promise<{
   return (
     <main className="mx-auto max-w-xl p-6 text-xl leading-relaxed">
       <h1 className="text-3xl font-semibold">Before we start</h1>
+      {sponsor && <p className="mt-2 text-gray-700">You're enrolling through {sponsor.name}.</p>}
       <div className="mt-4 space-y-3">
         <p><b>What we ask:</b> household members and ages, income, savings, housing and bill costs, health coverage, and benefits you already get. We never ask for your Social Security number.</p>
         <p><b>Why:</b> to check which programs you may qualify for and prepare your applications.</p>
@@ -28,6 +30,7 @@ export default async function Intake({ searchParams }: { searchParams: Promise<{
         <p><b>Delete anytime:</b> from your account page, or by emailing us. You can also download a copy.</p>
       </div>
       <form action={startIntake} className="mt-6 space-y-5">
+        <input type="hidden" name="org" value={sponsor ? org : ""} />
         <label className="block">Who is filling this out?
           <select name="relationship" className="mt-1 w-full rounded border p-3" defaultValue="self">
             <option value="self">I&apos;m answering for myself</option>
@@ -39,6 +42,11 @@ export default async function Intake({ searchParams }: { searchParams: Promise<{
         <label className="flex gap-3"><input type="checkbox" name="consent" className="mt-2 size-6" />
           <span>I agree to the above and want Recoup to use my answers to check my eligibility. (If I&apos;m helping someone, they&apos;ve asked me to.)</span>
         </label>
+        {sponsor && (
+          <label className="flex gap-3"><input type="checkbox" name="share" className="mt-2 size-6" />
+            <span>Optional: let {sponsor.name} see my individual results. If I leave this unchecked, they only see combined totals.</span>
+          </label>
+        )}
         {error && <p className="text-red-700">Please check the box to continue.</p>}
         <button className="rounded bg-black px-6 py-3 text-white">Continue</button>
       </form>
