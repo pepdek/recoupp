@@ -1,4 +1,4 @@
-// Launch blockers. Fails the build when it runs for production (Netlify CONTEXT=production, or LAUNCH_CHECK=1); otherwise prints a warning.
+// Launch blockers. Fails the build when LAUNCH_CHECK=1 (set it in the Netlify env of the live site); otherwise prints a warning.
 // Source-level on purpose: the site reads cookies in the header, so pages are rendered per request and there is no static HTML to scan.
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -20,7 +20,7 @@ for (const [v, what] of [["NEXT_PUBLIC_SUPPORT_EMAIL", "support email"], ["NEXT_
 const nav = readFileSync("components/v4.tsx", "utf8");
 if (/\(draft\)/.test(nav)) problems.push("components/v4.tsx: footer legal links still say (draft). Remove only after attorney review.");
 
-const strict = process.env.CONTEXT === "production" || process.env.LAUNCH_CHECK === "1";
+const strict = process.env.LAUNCH_CHECK === "1"; // not CONTEXT: `netlify deploy --build` drafts also build as "production"
 if (problems.length) {
   console.log(`\n${strict ? "LAUNCH BLOCKERS" : "Launch blockers (warning only, not a production build)"}:\n  ${problems.join("\n  ")}\nSee docs/LAUNCH_BLOCKERS.md\n`);
   if (strict) process.exit(1);

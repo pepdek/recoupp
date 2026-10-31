@@ -1,6 +1,6 @@
 # Launch blockers
 
-Visible on the live drafts today. Nothing here is invented: each placeholder stays visible until the real item exists. `npm run check:launch` lists them; it fails the build when `CONTEXT=production` (Netlify) or `LAUNCH_CHECK=1`, and only warns on drafts.
+Visible on the live drafts today. Nothing here is invented: each placeholder stays visible until the real item exists. `npm run check:launch` lists them; it fails the build when `LAUNCH_CHECK=1` and only warns otherwise. Set `LAUNCH_CHECK=1` in the Netlify environment of the live site (not drafts: Netlify CLI draft builds report CONTEXT=production, so that variable cannot tell them apart).
 
 | Blocker | Who supplies it | Where it lives |
 |---|---|---|
