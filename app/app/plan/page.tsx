@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getCtx } from "@/lib/household";
 import { programs } from "@/lib/programs";
 import { effectiveValue, isRecommended, type Evaluation } from "@/lib/review";
-import { Icon, Stamp, money } from "@/components/ui";
+import { Icon, Pill, money } from "@/components/ui";
 import Counter from "@/components/Counter";
 import { markClaim } from "./actions";
 
@@ -12,8 +12,8 @@ export default async function Plan() {
   if (!household) redirect("/intake");
   if (!household.reviewed_at) {
     return (
-      <main className="wrap-narrow py-10">
-        <p><span className="stamp">In review</span></p>
+      <main className="wrap-narrow">
+        <p><span className="pill pill-amber"><Icon name="clock" size={16} />In review</span></p>
         <h1 className="mt-4">A person is checking your answers.</h1>
         <p className="mt-4">We look at every result before you see it, so the number you get is one you can trust. We'll email you when it's ready.</p>
         <p className="mt-4"><Link href="/documents">Add documents while you wait</Link></p>
@@ -29,45 +29,48 @@ export default async function Plan() {
   const range = items.reduce((r, e) => (e.override_value_likely != null ? { lo: r.lo + (effectiveValue(e) ?? 0), hi: r.hi + (effectiveValue(e) ?? 0) } : { lo: r.lo + (e.value?.low ?? effectiveValue(e) ?? 0), hi: r.hi + (e.value?.high ?? effectiveValue(e) ?? 0) }), { lo: 0, hi: 0 });
   const next = items.find((e) => { const c = claims?.find((x) => x.program_id === e.program_id); return !c || c.status === "recommended" || c.status === "prepared"; });
   return (
-    <main className="wrap py-10">
-      <div className="grain border-b-[3px] border-ink pb-10">
-        <p className="small font-bold uppercase tracking-widest">Your plan</p>
+    <main className="wrap py-8">
+      {/* Signature: the luminous balance. It counts up, settles, and the glass catches the light. */}
+      <section className="glass pad pulse" data-light aria-labelledby="total">
+        <p id="total" className="small font-bold">Your plan</p>
         {items.length ? (
           <>
-            <p className="bignum mt-3 text-forest"><Counter to={Math.round(total)} /></p>
-            <p className="display mt-2 text-[1.6rem] md:text-[2.25rem]">a year we think you may be owed.</p>
+            <p className="bignum mt-1"><Counter to={Math.round(total)} /></p>
+            <p className="display text-[1.75rem] leading-tight md:text-[2.4rem]">a year we think you may be <em>owed</em>.</p>
             <p className="mt-3 max-w-xl">{range.hi > range.lo ? `Our range is ${money(range.lo)} to ${money(range.hi)}. ` : ""}These are estimates. Each agency decides, and a person on our team checked every one below.</p>
           </>
         ) : (
           <>
-            <h1 className="mt-3">Nothing to apply for right now.</h1>
+            <h1 className="mt-2">Nothing to apply for right now.</h1>
             <p className="mt-3 max-w-xl">We checked every program and none fit your answers today. If anything changes, like income, bills or who lives at home, tell us and we'll check again.</p>
           </>
         )}
-      </div>
+      </section>
 
       {next && (
-        <div className="slip mt-8 md:flex md:items-center md:justify-between md:gap-6">
-          <div><p className="small font-bold uppercase tracking-widest">Do this first</p><p className="display mt-1 text-3xl">{programs.find((p) => p.id === next.program_id)?.name ?? next.program_id}</p></div>
+        <section className="glass pad mt-6 md:flex md:items-center md:justify-between md:gap-6" aria-label="First step">
+          <div><p className="small font-bold">Do this first</p><p className="display mt-1 text-3xl">{programs.find((p) => p.id === next.program_id)?.name ?? next.program_id}</p></div>
           <p className="mt-4 flex flex-wrap gap-3 md:mt-0">
-            <a className="btn" href={`/api/packet/${next.program_id}`}><Icon name="download" />Get the filled-in sheet</a>
+            <a className="btn" href={`/api/packet/${next.program_id}`} data-light><Icon name="download" />Get the filled-in sheet</a>
             <Link className="btn btn-quiet" href="/track">Track my claims</Link>
           </p>
-        </div>
+        </section>
       )}
 
-      <ul className="mt-8 grid gap-6 md:grid-cols-2">
+      {/* Bento: the biggest program gets the wide tile; the rest sit unevenly around it */}
+      <ul className="mt-6 grid gap-5 md:grid-cols-6">
         {items.map((e, i) => {
           const p = programs.find((x) => x.id === e.program_id), c = claims?.find((x) => x.program_id === e.program_id), v = effectiveValue(e);
-          const range = v != null && e.override_value_likely == null && e.value && e.value.low !== e.value.high;
+          const rng = v != null && e.override_value_likely == null && e.value && e.value.low !== e.value.high;
+          const span = i === 0 ? "md:col-span-6" : i % 3 === 1 ? "md:col-span-4" : "md:col-span-2";
           return (
-            <li key={e.id} className={`ticket ${i === 0 ? "md:col-span-2" : ""}`}>
+            <li key={e.id} className={`ticket ${span}`}>
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <h2 className="!text-[1.6rem]">{p?.name ?? e.program_id}</h2>
-                {c && <Stamp status={c.status} down={c.status === "approved"} />}
+                <h2 className="!text-[1.75rem]">{p?.name ?? e.program_id}</h2>
+                {c && <Pill status={c.status} down={c.status === "approved"} />}
               </div>
-              <p className="display mt-3 text-4xl">{v == null ? "No number yet" : range ? `${money(e.value!.low)} to ${money(e.value!.high)}` : `About ${money(v)}`}{v != null && <span className="small ml-2 font-sans font-normal">a year</span>}</p>
-              <p className="mt-2">{e.reason}</p>
+              <p className="display mt-3 text-4xl leading-none">{v == null ? "No number yet" : rng ? `${money(e.value!.low)} to ${money(e.value!.high)}` : `About ${money(v)}`}{v != null && <span className="small ml-2 font-sans">a year</span>}</p>
+              <p className="mt-3">{e.reason}</p>
               {e.reviewer_note && <p className="small mt-2"><b>Note from your reviewer:</b> {e.reviewer_note}</p>}
               <hr className="perf my-4" />
               <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
@@ -80,7 +83,7 @@ export default async function Plan() {
           );
         })}
       </ul>
-      <p className="small mt-8"><Link href="/documents">Add documents</Link> · {" "}Estimates only. Not legal, tax or financial advice.</p>
+      <p className="small mt-8 inline-block rounded-full bg-white/85 px-4 py-2"><Link href="/documents">Add documents</Link> · Estimates only. Not legal, tax or financial advice.</p>
     </main>
   );
 }

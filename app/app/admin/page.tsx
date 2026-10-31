@@ -25,7 +25,7 @@ export default async function Admin() {
           <tbody>{programs.map((p) => (
             <tr key={p.id}><td>{p.name}</td>
               <td className={p.confidence === "verified" ? "text-forest font-bold" : "font-bold"}>{p.confidence}</td>
-              <td className={old(p.last_verified) ? "text-stamp font-bold" : ""}>{p.last_verified}{old(p.last_verified) && " (stale)"}</td><td className="font-mono">{p.version}</td></tr>
+              <td className={old(p.last_verified) ? "text-pill font-bold" : ""}>{p.last_verified}{old(p.last_verified) && " (stale)"}</td><td className="font-mono">{p.version}</td></tr>
           ))}</tbody>
         </table>
       </section>

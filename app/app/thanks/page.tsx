@@ -1,7 +1,7 @@
 export default function Thanks() {
   return (
     <main className="wrap-narrow py-10">
-      <p><span className="stamp stamp-forest stamp-down">Paid</span></p>
+      <p><span className="pill pill-green pill-pop">Paid</span></p>
       <h1 className="mt-4">Got it. Thank you.</h1>
       <p className="mt-4">Stripe is emailing your receipt.</p>
       <div className="ticket mt-6">

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCtx } from "@/lib/household";
 import { programs } from "@/lib/programs";
-import { Stamp } from "@/components/ui";
+import { Pill } from "@/components/ui";
 
 const STAGES: [string, string][] = [["recommended", "Found"], ["prepared", "Filled in"], ["submitted", "Sent in"], ["pending", "Agency deciding"], ["approved", "Approved"], ["receiving", "Getting it"]];
 const NEXT: Record<string, string> = {
@@ -23,7 +23,7 @@ export default async function Track() {
   if (!household) redirect("/intake");
   const { data: claims } = await sb.from("claims").select("*").eq("household_id", household.id).order("updated_at", { ascending: false });
   return (
-    <main className="wrap-narrow py-10">
+    <main className="wrap-narrow">
       <h1>Where your paperwork is</h1>
       {!claims?.length && <p className="mt-4">Nothing to track yet. Claims show up here once your plan is ready. <Link href="/plan">See your plan</Link></p>}
       <ul className="mt-8 space-y-8">
@@ -33,12 +33,12 @@ export default async function Track() {
             <li key={c.id} className="ticket">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <h2 className="!text-[1.5rem]">{programs.find((p) => p.id === c.program_id)?.name ?? c.program_id}</h2>
-                <Stamp status={c.status} />
+                <Pill status={c.status} />
               </div>
-              <ol className="mt-4 border-l-[3px] border-dotted border-ink pl-5">
+              <ol className="mt-4 border-l-2 border-ink/30 pl-6">
                 {STAGES.map(([k, label], i) => (
-                  <li key={k} className={`relative py-1 ${i > at ? "opacity-70" : "font-bold"}`}>
-                    <span aria-hidden className={`absolute -left-[1.85rem] top-2.5 size-3.5 border-[3px] border-ink ${i <= at ? "bg-forest" : "bg-paper"}`} />
+                  <li key={k} className={`relative py-1.5 ${i > at ? "text-ink-2" : "font-bold"}`}>
+                    <span aria-hidden className={`absolute -left-[2.1rem] top-3 size-4 rounded-full border-2 ${i < at ? "border-money bg-money" : i === at ? "border-ink bg-coral shadow-[0_0_16px_4px_rgba(255,160,80,.8)]" : "border-ink-2 bg-white"}`} />
                     {label}{i === at && <> <span className="small font-normal">· {day(c.updated_at)}</span></>}
                     <span className="sr-only">{i < at ? " (done)" : i === at ? " (you are here)" : " (not yet)"}</span>
                   </li>

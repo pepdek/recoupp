@@ -61,7 +61,7 @@ export default async function Documents() {
             {d.extraction_status === "none" && (
               <form action={extractDocument} className="mt-3"><input type="hidden" name="id" value={d.id} /><button className="btn btn-quiet btn-sm">Read this document for me</button></form>
             )}
-            {d.extraction_status === "failed" && <p className="mt-3  text-stamp font-bold">We couldn&apos;t read this one. A reviewer will look at it.</p>}
+            {d.extraction_status === "failed" && <p className="mt-3  text-pill font-bold">We couldn&apos;t read this one. A reviewer will look at it.</p>}
             {d.extraction_status === "done" && (
               <form action={confirmFields} className="mt-3 space-y-3 ">
                 <input type="hidden" name="id" value={d.id} />

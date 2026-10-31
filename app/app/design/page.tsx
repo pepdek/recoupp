@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import { ICONS } from "@/components/Icon";
-import { Icon, Stamp, Strip, Wordmark, money } from "@/components/ui";
+import { Icon, Pill, Strip, Wordmark, money } from "@/components/ui";
 
 export const metadata: Metadata = { title: "Design specimen", robots: { index: false } };
-const swatch: [string, string, string][] = [["paper", "bg-paper", "#F4ECD8"], ["paper-2", "bg-paper-2", "#E9DFC5"], ["ink", "bg-ink text-paper", "#1E1B16"], ["forest", "bg-forest text-paper", "#2F4A2B"], ["stamp", "bg-stamp text-paper", "#B5381A"], ["mustard", "bg-mustard", "#E0A921"]];
+const swatch: [string, string, string][] = [["paper", "bg-paper", "#F4ECD8"], ["paper-2", "bg-paper-2", "#E9DFC5"], ["ink", "bg-ink text-paper", "#1E1B16"], ["forest", "bg-forest text-paper", "#2F4A2B"], ["pill", "bg-pill text-paper", "#B5381A"], ["mustard", "bg-mustard", "#E0A921"]];
 
 export default function Specimen() {
   return (
-    <main className="wrap space-y-12 py-10">
+    <main className="wrap my-6"><div className="glass pad space-y-12">
       <header><p className="small font-bold uppercase tracking-widest">Design specimen</p><h1 className="mt-2">Tokens and parts</h1><div className="mt-4"><Wordmark size="3rem" /></div></header>
 
       <section aria-labelledby="c"><h2 id="c">Color</h2>
-        <ul className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-6">{swatch.map(([n, c, h]) => <li key={n} className={`${c} border-[3px] border-ink p-3`}><b>{n}</b><br /><span className="small">{h}</span></li>)}</ul></section>
+        <ul className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">{swatch.map(([n, c, h]) => <li key={n} className={`${c} rounded-2xl p-3`}><b>{n}</b><br /><span className="small">{h}</span></li>)}</ul></section>
 
       <section aria-labelledby="t"><h2 id="t">Type</h2>
         <p className="bignum mt-4">{money(2435)}</p>
@@ -24,11 +24,11 @@ export default function Specimen() {
         <form className="mt-4 max-w-md space-y-4"><label className="field">Label<span className="hint">Hint text goes here.</span><input className="input" defaultValue="Value" /></label>
           <label className="check"><input type="checkbox" defaultChecked />Checkbox row</label><p role="alert" className="err">Something to fix, said plainly.</p></form></section>
 
-      <section aria-labelledby="s"><h2 id="s">Stamps and progress</h2>
-        <p className="mt-4 flex flex-wrap gap-4">{["recommended", "submitted", "approved", "needs_info", "renewal_due", "receiving"].map((s) => <Stamp key={s} status={s} />)}</p>
+      <section aria-labelledby="s"><h2 id="s">Pills and progress</h2>
+        <p className="mt-4 flex flex-wrap gap-4">{["recommended", "submitted", "approved", "needs_info", "renewal_due", "receiving"].map((s) => <Pill key={s} status={s} />)}</p>
         <div className="mt-6 max-w-md"><Strip total={9} current={4} /></div></section>
 
-      <section aria-labelledby="k"><h2 id="k">Ticket, slip, cheque, toast</h2>
+      <section aria-labelledby="k"><h2 id="k">Tiles, balance, toast</h2>
         <div className="mt-4 grid gap-6 md:grid-cols-2">
           <div className="ticket"><h3>Medicare Savings Program</h3><p className="display mt-2 text-4xl">About {money(2435)}<span className="small ml-2 font-sans font-normal">a year</span></p><p className="mt-2">Pays the Part B premium.</p></div>
           <div className="slip"><h3>Printed terms</h3><p className="mt-2">Dashed edge, paper-2 fill.</p></div>
@@ -40,6 +40,6 @@ export default function Specimen() {
 
       <section aria-labelledby="i"><h2 id="i">Icons ({ICONS.length})</h2>
         <ul className="mt-4 grid grid-cols-3 gap-3 md:grid-cols-7">{ICONS.map((n) => <li key={n} className="box flex items-center gap-2"><Icon name={n} size={28} /><span className="small">{n}</span></li>)}</ul></section>
-    </main>
+    </div></main>
   );
 }

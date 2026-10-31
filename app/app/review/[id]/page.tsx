@@ -36,7 +36,7 @@ export default async function ReviewHousehold({ params, searchParams }: { params
       <header>
         <h1>{h.city}, {h.county} County</h1>
         <p className="muted">Answered {h.relationship === "self" ? "by the household" : `by a ${h.relationship}`} · consent {consents?.map((c) => `${c.version} ${c.accepted_at.slice(0, 10)}`).join(", ")} · {h.reviewed_at ? `reviewed ${h.reviewed_at.slice(0, 10)}` : "awaiting review"}</p>
-        {error && <p className="mt-2 text-stamp font-bold">That didn&apos;t work ({error}). {error === "outcome" && "Choose an outcome before approving a needs-review item."}</p>}
+        {error && <p className="mt-2 text-pill font-bold">That didn&apos;t work ({error}). {error === "outcome" && "Choose an outcome before approving a needs-review item."}</p>}
       </header>
 
       <section>

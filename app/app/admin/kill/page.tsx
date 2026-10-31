@@ -3,12 +3,12 @@ import { killReport, ratesFromEnv, type KillMetrics, type Light } from "@/lib/ki
 import { requireAdmin } from "@/lib/admin";
 
 const pct = (v: number | null) => (v === null ? "no data" : `${Math.round(v * 100)}%`);
-const word: Record<Light, [string, string]> = { red: ["Failing", "stamp-red"], green: ["Passing", "stamp-forest"], nodata: ["No data", ""] };
+const word: Record<Light, [string, string]> = { red: ["Failing", "pill-red"], green: ["Passing", "pill-green"], nodata: ["No data", ""] };
 
 function Card({ title, value, light, rule, children }: { title: string; value: string; light: Light; rule: string; children?: React.ReactNode }) {
   return (
     <section className="ticket">
-      <h2 className="flex flex-wrap items-center gap-3">{title} <span className={`stamp ${word[light][1]}`}>{word[light][0]}</span></h2>
+      <h2 className="flex flex-wrap items-center gap-3">{title} <span className={`pill ${word[light][1]}`}>{word[light][0]}</span></h2>
       <p className="mt-1">{value}</p>
       <p className="text-sm muted">Kill if {rule}</p>
       {children && <div className="mt-2 text-sm muted">{children}</div>}

@@ -34,7 +34,7 @@ export default async function Queue() {
             <tr key={h.id}>
               <td><Link data-row href={`/review/${h.id}`} className="font-bold">{h.city}, {h.county} County</Link></td>
               <td>{h.relationship}</td><td className="num">~{$(value)}</td><td className="num">{days}d</td>
-              <td>{e ? <span className="stamp stamp-red">Escalated</span> : "New"}</td>
+              <td>{e ? <span className="pill pill-red">Escalated</span> : "New"}</td>
             </tr>
           ))}
           {!rows.length && <tr><td colSpan={5} className="muted">Nothing waiting.</td></tr>}

@@ -3,14 +3,15 @@ import { BRAND } from "./brand";
 type Mail = { heading: string; paragraphs: string[]; cta?: { label: string; url: string }; footnote?: string };
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 // Email clients drop web fonts, so Georgia stands in for Fraunces and Verdana for Atkinson here.
-const INK = "#1E1B16", PAPER = "#F4ECD8", STAMP = "#B5381A";
+const INK = "#1B1714", INK2 = "#4A3F38", BASE = "#FFF3E6";
+const FOOT = `${BRAND} helps with paperwork. We're not a law firm, tax preparer or financial adviser. Each agency makes the final decision.`;
 
-/** One look for every email: cream paper, ink rules, one red button, plain-text twin. */
+/** One look for every email: a peach-to-apricot band, a solid white card, a coral pill button, a plain-text twin. */
 export function renderEmail(m: Mail): { html: string; text: string } {
   const p = m.paragraphs.map((t) => `<p style="margin:0 0 16px;font:20px/1.5 Verdana,sans-serif;color:${INK}">${esc(t)}</p>`).join("");
-  const btn = m.cta ? `<p style="margin:24px 0"><a href="${esc(m.cta.url)}" style="display:inline-block;background:${STAMP};color:${PAPER};border:3px solid ${INK};padding:12px 24px;font:bold 20px Verdana,sans-serif;text-decoration:none">${esc(m.cta.label)}</a></p>` : "";
-  const html = `<!doctype html><html lang="en"><body style="margin:0;background:${PAPER}"><table role="presentation" width="100%" style="background:${PAPER}"><tr><td align="center" style="padding:24px 16px"><table role="presentation" width="100%" style="max-width:560px;border-top:3px solid ${INK}"><tr><td style="padding-top:16px"><p style="margin:0 0 24px;font:bold 28px Georgia,serif;color:${STAMP}">${esc(BRAND)}</p><h1 style="margin:0 0 20px;font:bold 34px/1.1 Georgia,serif;color:${INK}">${esc(m.heading)}</h1>${p}${btn}<hr style="border:0;border-top:3px dotted ${INK};margin:24px 0"><p style="margin:0;font:16px/1.5 Verdana,sans-serif;color:#4a4337">${esc(m.footnote ?? `${BRAND} helps with paperwork. We're not a law firm, tax preparer or financial adviser. Each agency makes the final decision.`)}</p></td></tr></table></td></tr></table></body></html>`;
-  const text = [m.heading, "", ...m.paragraphs.flatMap((t) => [t, ""]), ...(m.cta ? [`${m.cta.label}: ${m.cta.url}`, ""] : []), "--", m.footnote ?? `${BRAND} helps with paperwork. We're not a law firm, tax preparer or financial adviser. Each agency makes the final decision.`].join("\n");
+  const btn = m.cta ? `<p style="margin:24px 0 8px"><a href="${esc(m.cta.url)}" style="display:inline-block;background:#FF8A5B;background-image:linear-gradient(135deg,#FF8A5B,#FFB04A);color:${INK};border-radius:999px;padding:14px 28px;font:bold 20px Verdana,sans-serif;text-decoration:none">${esc(m.cta.label)}</a></p>` : "";
+  const html = `<!doctype html><html lang="en"><body style="margin:0;background:${BASE}"><table role="presentation" width="100%" style="background:${BASE}"><tr><td align="center" style="padding:16px"><table role="presentation" width="100%" style="max-width:560px"><tr><td style="background:#FFD3B0;background-image:linear-gradient(135deg,#FFD3B0,#FFB27A 70%,#F4B93E);border-radius:28px 28px 0 0;padding:28px 28px 20px"><p style="margin:0;font:28px Georgia,serif;letter-spacing:-1px;color:${INK}">${esc(BRAND)}</p></td></tr><tr><td style="background:#FFFFFF;border-radius:0 0 28px 28px;padding:28px"><h1 style="margin:0 0 20px;font:normal 36px/1.1 Georgia,serif;color:${INK}">${esc(m.heading)}</h1>${p}${btn}<p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #E6D8C8;font:16px/1.5 Verdana,sans-serif;color:${INK2}">${esc(m.footnote ?? FOOT)}</p></td></tr></table></td></tr></table></body></html>`;
+  const text = [m.heading, "", ...m.paragraphs.flatMap((t) => [t, ""]), ...(m.cta ? [`${m.cta.label}: ${m.cta.url}`, ""] : []), "--", m.footnote ?? FOOT].join("\n");
   return { html, text };
 }
 
