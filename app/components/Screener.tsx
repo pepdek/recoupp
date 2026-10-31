@@ -31,7 +31,7 @@ function matches(f: { county: string; city: string; age: number; size: number; b
   return COPY.filter((c) => !(c.id === "orca_lift" && f.county !== "King") && [a, b].some((r) => ok(r.find((x) => x.program_id === c.id)?.status ?? "unlikely")));
 }
 
-export default function Screener({ forWho }: { forWho: "me" | "parent" }) {
+export default function Screener({ forWho, nums }: { forWho: "me" | "parent"; nums: Record<string, number[]> }) {
   const [res, setRes] = useState<ReturnType<typeof matches> | null>(null), started = useRef(false), top = useRef<HTMLDivElement>(null);
   const parent = forWho === "parent", your = parent ? "your parent's" : "your";
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -63,7 +63,7 @@ export default function Screener({ forWho }: { forWho: "me" | "parent" }) {
               {res.map((c) => (
                 <li key={c.id} className="border-t border-ink/20 py-4">
                   <h3 className="flex items-center gap-2 !text-[1.375rem]"><Icon name="check" size={20} />{c.title} <span className="pill pill-amber ml-1">May qualify</span></h3>
-                  <p className="mt-1">{c.pays}</p>
+                  <p className="mt-1">{c.pays}{(nums[c.id] ?? []).map((n) => <a key={n} className="fn" href={`#src-${n}`} aria-label={`Source ${n}`}>{n}</a>)}</p>
                   <p className="small mt-1"><Link href={`/programs/${c.slug}`}>Who qualifies and how to apply</Link></p>
                 </li>
               ))}

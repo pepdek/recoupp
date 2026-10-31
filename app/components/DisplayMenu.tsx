@@ -17,7 +17,7 @@ export default function DisplayMenu({ on }: { on: K[] }) {
     <div ref={box} className="relative">
       <button type="button" className="btn btn-quiet btn-sm" aria-expanded={open} aria-controls="display-panel" onClick={() => setOpen(!open)}><span aria-hidden className="display text-xl leading-none">Aa</span><span className="sr-only">Display settings</span></button>
       {open && (
-        <div id="display-panel" role="group" aria-label="Display settings" className="popover glass solid pad">
+        <div id="display-panel" role="group" aria-label="Display settings" className="popover">
           <p className="font-bold">Make this easier to read</p>
           <div className="mt-3"><Toggles on={on} /></div>
           <p className="small muted mt-3">We remember your choice on this device.</p>

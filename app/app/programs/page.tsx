@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { COPY, programData } from "@/lib/programCopy";
+import { COPY, PROGRAM_SOURCES, allProgramSources, programData } from "@/lib/programCopy";
+import { cites } from "@/lib/sources";
 import { programs } from "@/lib/programs";
 import { LAST_CHECKED, prettyDate } from "@/lib/site";
 import { BRAND } from "@/lib/brand";
 
 export const metadata: Metadata = { title: "Programs we check", description: `The Washington benefit programs ${BRAND} checks, what each one pays, and who qualifies.`, alternates: { canonical: "/programs" } };
 export default function Programs() {
+  const S = cites(allProgramSources().ids);
   const review = programs.filter((p) => p.confidence !== "verified");
   return (
     <main className="wrap-narrow">
@@ -17,7 +19,7 @@ export default function Programs() {
         {COPY.map((c) => (
           <li key={c.id} className="factrow">
             <h2 className="!text-[1.75rem]"><Link href={`/programs/${c.slug}`}>{c.title}</Link></h2>
-            <p>{c.pays}</p>
+            <p>{c.pays}<S.Cite id={PROGRAM_SOURCES[c.id]} /></p>
             <p className="small">{programData(c.id).agency}.</p>
           </li>
         ))}
@@ -25,6 +27,7 @@ export default function Programs() {
       <h2 className="mt-10">Also checked by a person</h2>
       <p className="mt-3">We also look at these. A person confirms them before you see a result, so we don&apos;t show amounts here yet.</p>
       <ul className="ml-5 mt-3 list-disc grid gap-1 small">{review.map((p) => <li key={p.id}>{p.name}</li>)}</ul>
+      <S.Block />
     </main>
   );
 }

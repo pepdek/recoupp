@@ -9,7 +9,7 @@ const STEPS: [string, string, string, string][] = [
   ["Follow", "We nudge you about missing papers, agency letters and renewal dates.", "We nudge you about missing papers, agency letters and renewal dates, so nothing slips.", "calendar"],
 ];
 /** For me / For my parent: swaps pronouns in the four steps. Starts on "parent" when the visitor chose that entry point. */
-export default function Audience({ initial, icons }: { initial: Who; icons: Record<string, React.ReactNode> }) {
+export default function Audience({ initial }: { initial: Who }) {
   const [who, setWho] = useState<Who>(initial);
   return (
     <div>
@@ -19,10 +19,10 @@ export default function Audience({ initial, icons }: { initial: Who; icons: Reco
         ))}
       </div>
       <ol className="cols-4 mt-8 grid gap-6 md:grid-cols-4">
-        {STEPS.map(([name, me, parent, icon], i) => (
+        {STEPS.map(([name, me, parent], i) => (
           <li key={name}>
             <p className="display text-6xl leading-none text-link" aria-hidden>{i + 1}</p>
-            <h3 className="mt-2 flex items-center gap-2">{icons[icon]}{name}</h3>
+            <h3 className="mt-2">{name}</h3>
             <p className="small mt-2">{who === "me" ? me : parent}</p>
           </li>
         ))}

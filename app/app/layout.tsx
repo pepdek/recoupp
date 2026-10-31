@@ -28,8 +28,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <FieldBg />
         <PageView />
         <Header />
-        <div id="main" tabIndex={-1} className="flex-1">{children}</div>
-        <Footer />
+        <div className="sheet-col flex-1">
+          <div id="main" tabIndex={-1}>{children}</div>
+          <Footer />
+        </div>
         <StickyCta phone={PHONE || undefined} />
       </body>
     </html>

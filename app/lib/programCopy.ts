@@ -45,3 +45,12 @@ export const COPY: Copy[] = [
 export const bySlug = (slug: string) => COPY.find((c) => c.slug === slug);
 export const byId = (id: string) => COPY.find((c) => c.id === id);
 export const programData = P;
+
+// Which numbered sources (lib/sources.tsx) each program page, list and match cites, in order of appearance.
+export const PROGRAM_SOURCES: Record<string, string[]> = { msp: ["cms", "wac_msp", "fpl"], extra_help: ["medicare_xh", "ssa_xh"], basic_food: ["dshs_bf", "wac_bf"], lifeline: ["lifeline", "fpl"], liheap: ["liheap", "fpl"], tpu_assistance: ["tpu"], seattle_udp: ["seattle"], orca_lift: ["orca", "fpl"] };
+/** Unique source ids across all programs, in order of first use, and each program's numbers in that list. */
+export function allProgramSources() {
+  const ids = [...new Set(COPY.flatMap((c) => PROGRAM_SOURCES[c.id]))];
+  const nums = Object.fromEntries(COPY.map((c) => [c.id, PROGRAM_SOURCES[c.id].map((id) => ids.indexOf(id) + 1)]));
+  return { ids, nums };
+}

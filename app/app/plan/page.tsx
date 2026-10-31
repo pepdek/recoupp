@@ -58,13 +58,12 @@ export default async function Plan() {
       )}
 
       {/* Bento: the biggest program gets the wide tile; the rest sit unevenly around it */}
-      <ul className="mt-6 grid gap-5 md:grid-cols-6">
-        {items.map((e, i) => {
+      <ul className="mt-8">
+        {items.map((e) => {
           const p = programs.find((x) => x.id === e.program_id), c = claims?.find((x) => x.program_id === e.program_id), v = effectiveValue(e);
           const rng = v != null && e.override_value_likely == null && e.value && e.value.low !== e.value.high;
-          const span = i === 0 ? "md:col-span-6" : i % 3 === 1 ? "md:col-span-4" : "md:col-span-2";
           return (
-            <li key={e.id} className={`ticket ${span}`}>
+            <li key={e.id} className="ticket pb-8">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <h2 className="!text-[1.75rem]">{p?.name ?? e.program_id}</h2>
                 {c && <Pill status={c.status} down={c.status === "approved"} />}
