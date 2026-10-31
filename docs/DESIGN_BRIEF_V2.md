@@ -127,3 +127,6 @@ Budget: Lighthouse mobile performance 85+, accessibility 95+, run at the Moto G 
 - I can't log in, so signed-in screens will again only be visually checked through a `/design` specimen page and a build. If you give me a way to sign in as a test user (or okay a dev-only fixture route), I can check them for real.
 - The $2,435 hero is still the Part B premium, flagged unverified in `msp.yaml`.
 - `backdrop-filter` is heavy on old Android. Calm mode and the 3-pane budget are the guard, and I will test it instead of assuming.
+
+## Changes after founder review (Oct 31)
+Name is Recoupp. Flat buttons with no shine or pointer highlight. Display toggles live in the footer, not the nav. No cards inside cards: inside a pane, content is divided by hairlines. Richer top-left of the field. Sections 5 and 6 above describe the earlier behavior where they differ.

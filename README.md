@@ -1,4 +1,4 @@
-# Recoup (working name): Phase 1
+# Recoupp (working name): Phase 1
 
 Completed benefit claims for low-income older adults in Washington State. Households (or sponsors for their members) pay; we screen, prepare, and track; a human reviews everything consequential. Not legal, tax, or financial advice.
 

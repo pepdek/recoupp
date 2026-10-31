@@ -33,13 +33,13 @@ export default function Home() {
         <p className="small ml-1 inline-block rounded-full bg-white/80 px-4 py-1 font-bold">Washington State · people 60 and up, and their families</p>
         <p className="bignum mt-3 -ml-1"><Counter to={premium} /></p>
         <div className="grid items-start gap-6 md:grid-cols-[1.15fr_1fr] -mt-8 md:-mt-16 lg:-mt-24">
-          <div className="glass pad md:ml-10" data-light>
+          <div className="glass pad md:ml-10">
             <p className="display text-[1.75rem] leading-tight md:text-[2.4rem]">
               a year is what Medicare Part B costs one person. A <em>Medicare Savings Program</em> can pay it.
             </p>
             <p className="mt-4">Many people who qualify never apply. We check about twenty Washington programs for you or your parent, fill in the paperwork, and stay on it until it's decided.</p>
             <form action="/api/checkout" method="post" className="mt-6">
-              <button className="btn w-full md:w-auto" data-light>Get my report, $149</button>
+              <button className="btn w-full md:w-auto">Get my report, $149</button>
             </form>
             <p className="small mt-3 font-bold">Full refund if we find under $1,000 a year in likely benefits.</p>
             <p className="small mt-1"><a href="#sample">See a sample result</a></p>
@@ -99,7 +99,7 @@ export default function Home() {
 
       {/* 4. Guarantee */}
       <section className="wrap mt-20 md:mt-28" aria-labelledby="g">
-        <div className="glass glass-warm pad mx-auto max-w-3xl" data-light>
+        <div className="glass glass-warm pad mx-auto max-w-3xl">
           <p className="small flex items-center gap-2 font-bold"><Icon name="shield" size={20} />The terms, in plain words</p>
           <h2 id="g" className="mt-2">Find under $1,000 a year? You pay <em>nothing</em>.</h2>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2">

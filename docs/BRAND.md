@@ -1,6 +1,6 @@
 # Brand (Phase 2)
 
-Name: **"Recoup" is a placeholder.** One line (`app/lib/brand.ts`) changes it everywhere. Options and the case against Recoup are in `DESIGN_BRIEF.md`.
+Name: **Recoupp** (two p's), chosen by the founder. One line (`app/lib/brand.ts`) changes it everywhere. This file describes the v1 look; v2 is in `DESIGN_BRIEF_V2.md`. Trademark, domain and state name checks are still not done.
 
 ## Wordmark and mark
 Type-only wordmark set in Fraunces Bold, tracked to -0.045em, with a stamp ring around the first letter (a dotted inner ring, tilted 6 degrees). The mark is that ring and works as favicon (`app/app/icon.svg`) and as a stamp. SVGs: `app/public/brand/mark.svg`, `wordmark.svg`. These SVGs reference Fraunces by name and fall back to Georgia, so they are not outlined yet. Outline them once the name is final.

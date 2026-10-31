@@ -15,7 +15,10 @@ const j = (v: unknown) => `${q(JSON.stringify(v))}::jsonb`;
 const ORG = id("org"), REVIEWER = id("reviewer");
 
 if (process.argv.includes("--cleanup")) {
-  console.log(`delete from ledger_entries where org_id = '${ORG}' or household_id in (select id from households where owner_id in (select id from auth.users where email like 'demo-%@example.test'));
+  // The ledger is append-only (DB trigger), so cleanup lifts that trigger for this one statement and puts it back.
+  console.log(`alter table ledger_entries disable trigger user;
+delete from ledger_entries where org_id = '${ORG}' or household_id in (select id from households where owner_id in (select id from auth.users where email like 'demo-%@example.test'));
+alter table ledger_entries enable trigger user;
 delete from payments where stripe_object_id like 'demo_%';
 delete from auth.users where email like 'demo-%@example.test';
 delete from events where org_id = '${ORG}';
@@ -33,8 +36,8 @@ ins("organizations", { id: ORG, name: "Demo Senior Services", slug: "demo-senior
 ins("payments", { stripe_object_id: "demo_in_1", offer: "A", org_id: ORG, email: "billing@example.test", amount_cents: 495000, status: "paid" });
 out.push(`insert into events (org_id, name) select '${ORG}', 'link_visit' from generate_series(1, 12);`);
 
-const only = process.argv.find((a) => a.startsWith("--only="))?.slice(7); // e.g. --only=10 for a one-household smoke test
-for (const d of DEMOS.filter((x) => !only || String(x.n) === only)) {
+const only = process.argv.find((a) => a.startsWith("--only="))?.slice(7).split(","); // e.g. --only=1,9,10 for a smaller seed
+for (const d of DEMOS.filter((x) => !only || only.includes(String(x.n)))) {
   const owner = id(`user${d.n}`), hh = id(`hh${d.n}`), reviewed = d.n >= 9; // 1-8 wait in the review queue; 9-10 are reviewed with verified outcomes
   out.push(`insert into auth.users (id, email, aud, role) values ('${owner}', 'demo-${d.n}@example.test', 'authenticated', 'authenticated');`);
   ins("households", { id: hh, owner_id: owner, org_id: d.sponsor ? ORG : null, relationship: d.relationship, county: d.county, city: d.city, answers: d.answers, step: "review", status: "completed" },

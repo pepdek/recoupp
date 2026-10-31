@@ -64,3 +64,5 @@ Done and tested in code or SQL: payments + idempotent webhook, intake + consent,
 - Packets are answers sheets, not filled official forms (DECISIONS 25).
 - 12 of 20 programs unverified; Basic Food FY2027 tables (Oct 2026) not checked.
 - Nothing deployed to production; draft deploys only; Stripe live mode off.
+53. **Name is "Recoupp"** (two p's), set by the founder on the v2 branch. One constant, `app/lib/brand.ts`. No trademark, domain or WA name search has been done for this spelling.
+54. **v2 feedback:** buttons are flat (no gloss, no hover shine); display toggles (Calm, Larger text, High contrast) moved from the nav to the footer; cards no longer nest inside panes (inside a pane, content is separated by hairlines, not boxes).

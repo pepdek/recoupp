@@ -1,6 +1,6 @@
 # Terms of Service (DRAFT FOR ATTORNEY REVIEW, NOT IN EFFECT)
 
-**1. What we do.** Recoup screens your answers against public benefit rules, prepares application materials, and tracks your applications. A person on our team reviews results before we show them to you. We are not a law firm, tax preparer, or financial advisor, and nothing here is legal, tax, or financial advice. Results are estimates. Each agency decides whether you qualify and how much you receive.
+**1. What we do.** Recoupp screens your answers against public benefit rules, prepares application materials, and tracks your applications. A person on our team reviews results before we show them to you. We are not a law firm, tax preparer, or financial advisor, and nothing here is legal, tax, or financial advice. Results are estimates. Each agency decides whether you qualify and how much you receive.
 
 **2. Your responsibilities.** Give accurate information. If you act for someone else, you confirm they asked you to and you may share their information. You complete and submit applications yourself unless we state otherwise; you fill in sensitive identifiers such as Social Security and Medicare numbers by hand.
 

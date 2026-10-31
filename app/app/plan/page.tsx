@@ -31,7 +31,7 @@ export default async function Plan() {
   return (
     <main className="wrap py-8">
       {/* Signature: the luminous balance. It counts up, settles, and the glass catches the light. */}
-      <section className="glass pad pulse" data-light aria-labelledby="total">
+      <section className="glass pad pulse" aria-labelledby="total">
         <p id="total" className="small font-bold">Your plan</p>
         {items.length ? (
           <>
@@ -51,7 +51,7 @@ export default async function Plan() {
         <section className="glass pad mt-6 md:flex md:items-center md:justify-between md:gap-6" aria-label="First step">
           <div><p className="small font-bold">Do this first</p><p className="display mt-1 text-3xl">{programs.find((p) => p.id === next.program_id)?.name ?? next.program_id}</p></div>
           <p className="mt-4 flex flex-wrap gap-3 md:mt-0">
-            <a className="btn" href={`/api/packet/${next.program_id}`} data-light><Icon name="download" />Get the filled-in sheet</a>
+            <a className="btn" href={`/api/packet/${next.program_id}`}><Icon name="download" />Get the filled-in sheet</a>
             <Link className="btn btn-quiet" href="/track">Track my claims</Link>
           </p>
         </section>

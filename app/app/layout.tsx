@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { Figtree, Instrument_Serif } from "next/font/google";
 import { BRAND } from "@/lib/brand";
 import FieldBg from "@/components/FieldBg";
-import Light from "@/components/Light";
 import { Footer, Header } from "@/components/ui";
 import "./globals.css";
 
@@ -21,7 +20,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className={`${instrument.variable} ${figtree.variable}`} data-lg={ui.includes("lg") ? "" : undefined} data-hc={ui.includes("hc") ? "" : undefined} data-calm={ui.includes("calm") ? "" : undefined}>
       <body className="flex min-h-screen flex-col">
         <FieldBg />
-        <Light />
         <Header />
         <div id="main" tabIndex={-1} className="flex-1">{children}</div>
         <Footer />

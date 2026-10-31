@@ -7,6 +7,7 @@ export default async function Account() {
     <main className="wrap-narrow py-10">
       <h1>Your data</h1>
       <p className="mt-2">{user.email}</p>
+      <nav aria-label="Your pages" className="mt-4 flex flex-wrap gap-x-6 gap-y-1"><a href="/plan">Your plan</a><a href="/track">Track claims</a><a href="/documents">Documents</a></nav>
       {household ? (
         <div className="mt-6 space-y-6">
           <p><a className="btn btn-quiet" href="/api/household/export">Download a copy (JSON)</a></p>

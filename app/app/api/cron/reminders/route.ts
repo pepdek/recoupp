@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const m = message(d.kind, name, site);
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST", headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ from: process.env.RESEND_FROM ?? "Recoup <onboarding@resend.dev>", to: email, subject: m.subject, text: m.text, html: m.html }),
+      body: JSON.stringify({ from: process.env.RESEND_FROM ?? "Recoupp <onboarding@resend.dev>", to: email, subject: m.subject, text: m.text, html: m.html }),
     });
     if (res.ok) sent++; else { failed++; await db.from("reminder_log").delete().eq("dedupe_key", d.key); }
   }

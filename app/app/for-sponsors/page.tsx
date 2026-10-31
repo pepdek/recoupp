@@ -20,12 +20,12 @@ export default function ForSponsors() {
       <section className="relative overflow-hidden">
         <p aria-hidden className="display pointer-events-none absolute -right-6 -top-10 select-none text-[clamp(16rem,52vw,40rem)] italic leading-none text-white/55 md:-right-16">5×</p>
         <div className="wrap relative grid gap-8 py-10 md:grid-cols-[1.3fr_1fr] md:py-16">
-          <div className="glass pad" data-light>
+          <div className="glass pad">
             <p className="small font-bold">Founding Sponsor Pilot · Washington State</p>
             <h1 className="mt-3">We only count dollars with a <em>paper trail</em>.</h1>
             <p className="mt-4 max-w-2xl text-[1.0625rem]">Your members get help with benefit applications. You get a monthly report of verified dollars: approval letters and confirmed receipts that our staff checked and logged. Estimates never count toward the guarantee.</p>
             <p className="mt-5 flex flex-wrap items-center gap-4">
-              <a className="btn" href={mail} data-light>Book a pilot</a>
+              <a className="btn" href={mail}>Book a pilot</a>
               <span className="small font-bold">{money(99)} per household · 100 households minimum</span>
             </p>
           </div>

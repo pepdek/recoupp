@@ -36,7 +36,7 @@
   --border-w: 1px; --border-c: rgb(255 255 255 / 0);
   --input-border: #4a3f38;
   --spring: linear(0, 0.402 7.4%, 0.711 15.3%, 0.929 23.7%, 1.008 28.2%, 1.067 33%, 1.099 36.9%, 1.12 41.1%, 1.121 43.2%, 1.107 47.5%, 1.036 59.8%, 1.014 65%, 0.99 72%, 0.985 80%, 1);
-  --btn-bg: linear-gradient(135deg, #ff8a5b, #ffb04a);
+  --btn-bg: #ff8a5b;
 }
 .tool, .dense { --text: 1rem; --small: 0.875rem; font-size: var(--text); }
 html[data-lg] { font-size: 125%; }
@@ -72,37 +72,38 @@ a:hover { color: var(--color-ink); }
 :focus-visible { outline: 3px solid #1b1714; outline-offset: 2px; box-shadow: 0 0 0 6px #f4b93e; border-radius: 12px; }
 
 /* ===== Field: hand-placed, blurred color. Plain gradients, no images, no backdrop-filter ===== */
-.field { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--color-base); }
-.field::before { content: ""; position: absolute; inset: -12%; animation: drift var(--drift) ease-in-out infinite alternate; background:
+.paint { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--color-base); }
+.paint::before { content: ""; position: absolute; inset: -12%; animation: drift var(--drift) ease-in-out infinite alternate; background:
   radial-gradient(30% 26% at 24% 16%, rgb(255 110 60 / .55) 0, transparent 70%),
-  radial-gradient(52% 46% at 16% 12%, var(--color-apricot) 0, transparent 72%),
+  radial-gradient(60% 52% at 14% 14%, var(--color-apricot) 0, rgb(255 154 82 / .6) 42%, transparent 74%),
+  radial-gradient(34% 22% at 42% 2%, var(--color-marigold) 0, transparent 72%),
   radial-gradient(26% 24% at 80% 8%, var(--color-marigold) 0, transparent 70%),
   radial-gradient(40% 36% at 92% 62%, var(--color-clay) 0, transparent 72%),
   radial-gradient(38% 34% at 8% 88%, var(--color-sage) 0, transparent 72%),
   radial-gradient(38% 34% at 62% 40%, var(--color-sky) 0, transparent 72%),
   radial-gradient(26% 22% at 104% 104%, var(--color-teal) 0, transparent 70%); }
-.field[data-comp="sponsor"]::before { background:
+.paint[data-comp="sponsor"]::before { background:
   radial-gradient(48% 42% at 78% 14%, var(--color-sage) 0, transparent 72%),
   radial-gradient(40% 36% at 12% 20%, var(--color-sky) 0, transparent 72%),
   radial-gradient(36% 32% at 18% 92%, var(--color-apricot) 0, transparent 72%),
   radial-gradient(30% 26% at 96% 80%, var(--color-peach) 0, transparent 72%),
   radial-gradient(24% 20% at 50% 105%, var(--color-teal) 0, transparent 72%); }
-.field[data-comp="plan"]::before { background:
+.paint[data-comp="plan"]::before { background:
   radial-gradient(40% 34% at 50% 6%, var(--color-marigold) 0, transparent 72%),
   radial-gradient(46% 40% at 8% 30%, var(--color-apricot) 0, transparent 72%),
   radial-gradient(40% 36% at 96% 50%, var(--color-clay) 0, transparent 72%),
   radial-gradient(34% 30% at 30% 96%, var(--color-sage) 0, transparent 72%),
   radial-gradient(30% 26% at 78% 92%, var(--color-sky) 0, transparent 72%); }
-.field[data-comp="tool"]::before { background:
+.paint[data-comp="tool"]::before { background:
   radial-gradient(50% 30% at 50% -4%, var(--color-peach) 0, transparent 72%),
   radial-gradient(30% 26% at 100% 100%, var(--color-sage) 0, transparent 72%); }
-.field::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: var(--grain);
+.paint::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: var(--grain);
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
-html[data-calm] .field::before { display: none; } html[data-calm] .field { background: #ffebd6; }
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) { .field::before { display: none; } .field { background: #ffebd6; } }
+html[data-calm] .paint::before { display: none; } html[data-calm] .paint { background: #ffebd6; }
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) { .paint::before { display: none; } .paint { background: #ffebd6; } }
 @keyframes drift { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(2%, 2%, 0) scale(1.06); } }
 /* intake: the field warms a little with each section */
-.field[data-step] { filter: hue-rotate(calc(var(--step, 0) * -3deg)) saturate(calc(1 + var(--step, 0) * 0.02)); transition: filter 900ms ease; }
+.paint[data-step] { filter: hue-rotate(calc(var(--step, 0) * -3deg)) saturate(calc(1 + var(--step, 0) * 0.02)); transition: filter 900ms ease; }
 
 /* ===== Glass: one layer, 86% white. Blur only on .glass, never nested ===== */
 .glass, .wrap-narrow, .sheet {
@@ -114,9 +115,6 @@ html[data-calm] .field::before { display: none; } html[data-calm] .field { backg
 .glass::before, .wrap-narrow::before, .sheet::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
   background: linear-gradient(180deg, var(--edge-top), var(--edge-bot));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
-.glass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 400ms;
-  background: radial-gradient(420px circle at var(--mx, 30%) var(--my, 0%), rgb(255 255 255 / .6), transparent 60%); }
-.glass[data-light]::after { opacity: var(--specular); }
 .wrap { width: min(100% - 2rem, 70rem); margin-inline: auto; }
 .wrap-narrow { width: min(100% - 2rem, 42rem); margin: 1.5rem auto 0; padding: 1.5rem 1.25rem 2rem; }
 @media (min-width: 640px) { .wrap-narrow { padding: 2.25rem 2.5rem 2.5rem; margin-top: 2.5rem; } }
@@ -125,8 +123,7 @@ html[data-calm] .field::before { display: none; } html[data-calm] .field { backg
 
 /* Solid-tint cards: glass-looking edge, no blur (keeps the layer budget) */
 .ticket, .slip, .box, .cheque { position: relative; border-radius: var(--r-inner); background: var(--solid-fill); border: var(--border-w) solid var(--border-c);
-  box-shadow: 0 1px 1px rgb(60 30 10 / .06), 0 10px 28px -12px rgb(120 60 20 / .28), inset 0 1px 0 var(--edge-top); padding: 1.25rem; transition: transform 380ms var(--spring), box-shadow 380ms var(--spring); }
-.ticket:hover, .ticket:focus-within { transform: translateY(-3px); box-shadow: 0 1px 1px rgb(60 30 10 / .06), 0 18px 36px -14px rgb(120 60 20 / .36), inset 0 1px 0 var(--edge-top); }
+  box-shadow: 0 1px 1px rgb(60 30 10 / .06), 0 10px 28px -12px rgb(120 60 20 / .28), inset 0 1px 0 var(--edge-top); padding: 1.25rem; }
 .slip { background: rgb(255 243 230 / .92); }
 .box { padding: .75rem; border-radius: 14px; }
 .stub { border-left: 2px dotted var(--color-ink-2); padding-left: 1rem; }
@@ -143,15 +140,14 @@ html[data-calm] .field::before { display: none; } html[data-calm] .field { backg
 .pulse { animation: glowpulse 900ms ease-out 1 1.2s both; }
 @keyframes glowpulse { 40% { box-shadow: 0 0 0 10px rgb(244 185 62 / .35), 0 0 60px rgb(244 185 62 / .6); } }
 
-/* Buttons: coral-to-marigold pill, ink label (7.7:1 to 9.8:1) */
+/* Buttons: flat. Solid coral pill, ink label (7.7:1). Hover swaps the fill to marigold. No gloss, no shine. */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 3.25rem; padding: .625rem 1.75rem; border-radius: var(--r-pill);
-  font: 700 var(--text)/1.2 var(--font-sans); color: var(--color-ink); background: var(--btn-bg); border: var(--border-w) solid var(--border-c); cursor: pointer; text-decoration: none; position: relative; overflow: hidden;
-  box-shadow: inset 0 1.5px 0 rgb(255 255 255 / .8), inset 0 -2px 6px rgb(160 60 10 / .18), 0 8px 20px -8px rgb(255 120 60 / .7); transition: transform 380ms var(--spring), box-shadow 380ms var(--spring); }
-.btn::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(120px circle at var(--mx, 50%) var(--my, 0%), rgb(255 255 255 / .6), transparent 70%); transition: opacity 300ms; }
-.btn[data-light]:hover::after { opacity: var(--specular); }
-.btn:hover { color: var(--color-ink); transform: translateY(-2px); } .btn:active { transform: translateY(1px) scale(.98); }
-.btn-quiet { background: #fff; border: 2px solid var(--input-border); box-shadow: 0 6px 16px -10px rgb(120 60 20 / .5); }
-.btn-forest { background: #d6f2df; border: 2px solid var(--color-money); color: var(--color-money); box-shadow: none; }
+  font: 700 var(--text)/1.2 var(--font-sans); color: var(--color-ink); background: var(--btn-bg); border: 2px solid transparent; cursor: pointer; text-decoration: none; transition: background-color 120ms; }
+.btn:hover { color: var(--color-ink); background: #f9b21c; } .btn:active { transform: scale(.98); }
+.btn-quiet { background: transparent; border-color: var(--input-border); }
+.btn-quiet:hover { background: rgb(27 23 20 / .08); }
+.btn-forest { background: #d6f2df; border-color: var(--color-money); color: var(--color-money); }
+.btn-forest:hover { background: #bfe8cd; color: var(--color-money); }
 .btn-sm { min-height: 2.75rem; padding: .35rem 1.1rem; font-size: var(--small); }
 .btn[aria-pressed="true"] { background: var(--color-ink); color: #fff; border-color: var(--color-ink); }
 .linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--color-link); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; cursor: pointer; min-height: 2.75rem; }
@@ -214,3 +210,13 @@ html[data-calm] .bignum, html[data-hc] .bignum { text-shadow: none; animation: n
 .glass-sage { --glass-fill: rgb(244 250 242 / 0.88); }
 html[data-calm] .glass-warm, html[data-calm] .glass-sage { --glass-fill: #fffbf5; }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) { .glass-warm, .glass-sage { --glass-fill: #fffbf5; } }
+
+/* No cards inside cards: inside a pane, tiles become plain blocks divided by a hairline. */
+.glass .ticket, .glass .slip, .glass .cheque, .glass .box, .wrap-narrow .ticket, .wrap-narrow .slip, .wrap-narrow .cheque, .wrap-narrow .box, .sheet .ticket, .sheet .slip, .sheet .cheque, .sheet .box {
+  background: none; border: 0; border-radius: 0; box-shadow: none; transform: none; padding: 1rem 0 0; border-top: 1px solid rgb(27 23 20 / .18); }
+.glass .tbl, .wrap-narrow .tbl, .sheet .tbl { background: none; border: 0; border-radius: 0; box-shadow: none; }
+.glass .tbl th, .wrap-narrow .tbl th, .sheet .tbl th { background: none; border-bottom: 2px solid rgb(27 23 20 / .5); }
+html[data-calm] .glass .ticket, html[data-calm] .glass .slip { border-top-color: #1b1714; }
+
+.sheet, .glass, .wrap-narrow { overflow-wrap: anywhere; }
+.tblwrap { overflow-x: auto; }

@@ -38,21 +38,23 @@ export function Pill({ status, down }: { status: string; down?: boolean }) {
 }
 
 export async function Header() {
-  const ui = ((await cookies()).get("ui")?.value ?? "").split(",").filter(Boolean) as ("calm" | "lg" | "hc")[];
+  // Cookie presence only (no network call): enough to pick the label.
+  const signedIn = (await cookies()).getAll().some((c) => c.name.startsWith("sb-") && c.name.includes("auth-token"));
   return (
     <>
       <a href="#main" className="skip">Skip to content</a>
       <header className="nav">
-        <div className="wrap flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
+        <div className="wrap flex items-center justify-between gap-4 py-3">
           <Link href="/" className="text-ink no-underline hover:text-ink"><Wordmark /></Link>
-          <Toggles on={ui} />
+          <Link href={signedIn ? "/account" : "/login"} className="small font-bold">{signedIn ? "Account" : "Sign in"}</Link>
         </div>
       </header>
     </>
   );
 }
 
-export function Footer() {
+export async function Footer() {
+  const ui = ((await cookies()).get("ui")?.value ?? "").split(",").filter(Boolean) as ("calm" | "lg" | "hc")[];
   return (
     <footer className="wrap mt-20 mb-8">
       <div className="glass pad grid gap-8 md:grid-cols-[1.4fr_1fr]">
@@ -60,11 +62,14 @@ export function Footer() {
           <Wordmark size="1.75rem" />
           <p>{BRAND} is a paperwork service, not a law firm, tax preparer or financial adviser. Everything we show is an estimate. A person on our team reviews each result, and the agency makes the final decision. We never ask for your Social Security number.</p>
         </div>
-        <nav aria-label="Footer" className="small grid content-start gap-2">
-          <Link href="/for-sponsors">For organizations that serve older adults</Link>
-          <Link href="/login">Sign in</Link>
-          <Link href="/account">Your data: download or delete</Link>
-        </nav>
+        <div className="stack small">
+          <nav aria-label="Footer" className="grid gap-2">
+            <Link href="/for-sponsors">For organizations that serve older adults</Link>
+            <Link href="/login">Sign in</Link>
+            <Link href="/account">Your data: download or delete</Link>
+          </nav>
+          <div id="display"><p className="font-bold">Display</p><div className="mt-2"><Toggles on={ui} /></div></div>
+        </div>
       </div>
     </footer>
   );

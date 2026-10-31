@@ -72,8 +72,8 @@ export default async function Sponsor({ params }: { params: Promise<{ slug: stri
         <h2>Your enrollment link</h2>
         <div className="mt-2 flex flex-wrap items-center gap-6">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/api/sponsor/${slug}/qr`} alt="QR code for your enrollment link" className="size-40 box" />
-          <div><p className="break-all font-mono small">{link}</p><p className="mt-2 small muted">Residents and members see your name; the questionnaire and review are run by Recoup.</p></div>
+          <img src={`/api/sponsor/${slug}/qr`} alt="QR code for your enrollment link" width={160} height={160} className="h-40 w-40 rounded-xl bg-white object-contain p-1" />
+          <div><p className="break-all font-mono small">{link}</p><p className="mt-2 small muted">Residents and members see your name; the questionnaire and review are run by Recoupp.</p></div>
         </div>
       </section>
 
