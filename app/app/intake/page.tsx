@@ -12,7 +12,8 @@ export default async function Intake({ searchParams }: { searchParams: Promise<{
       <main className="mx-auto max-w-xl p-6 text-xl">
         <h1 className="text-3xl font-semibold">Your questionnaire is complete</h1>
         <p className="mt-4">A reviewer will check your results. We&apos;ll email you when your plan is ready.</p>
-        <Link className="mt-6 block underline" href="/documents">Upload documents</Link>
+        <Link className="mt-6 block underline" href="/plan">See your plan</Link>
+        <Link className="mt-3 block underline" href="/documents">Upload documents</Link>
         <Link className="mt-3 block underline" href="/account">Download or delete my data</Link>
       </main>
     );

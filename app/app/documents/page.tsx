@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import Uploader from "@/components/Uploader";
-import { evaluateAll } from "@/lib/engine";
-import { buildFacts } from "@/lib/facts";
 import { packetAllowed } from "@/lib/packet";
 import { programs } from "@/lib/programs";
 import { getCtx } from "@/lib/household";
+import type { Evaluation } from "@/lib/review";
 import type { Proposed } from "@/lib/extract";
 import { KINDS } from "@/lib/documents";
 import { confirmFields, deleteDocument, extractDocument } from "./actions";
@@ -23,12 +22,9 @@ export default async function Documents() {
   // Short-lived links so files are never publicly addressable.
   const links = Object.fromEntries(await Promise.all((docs ?? []).map(async (d) => [d.id, (await sb.storage.from("documents").createSignedUrl(d.storage_path, 300)).data?.signedUrl])));
 
-  // Checklists and packets appear only after a reviewer approves the plan.
-  let ready: ReturnType<typeof evaluateAll> = [];
-  if (household.reviewed_at && household.status === "completed") {
-    const { data: members } = await sb.from("household_members").select("*").eq("household_id", household.id);
-    ready = evaluateAll(programs, buildFacts(household, members ?? [])).filter((r) => packetAllowed(household, r));
-  }
+  // Checklists and packets appear only for reviewer-approved recommendations (RLS hides everything else).
+  const { data: evs } = await sb.from("evaluations").select("*").eq("household_id", household.id);
+  const ready = ((evs ?? []) as Evaluation[]).filter((e) => packetAllowed(household, e)).map((e) => ({ e, p: programs.find((x) => x.id === e.program_id)! })).filter((x) => x.p);
 
   return (
     <main className="mx-auto max-w-2xl space-y-6 p-6 text-xl">
@@ -38,13 +34,13 @@ export default async function Documents() {
       {ready.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Your application packets</h2>
-          {ready.map((r) => (
-            <div key={r.program_id} className="rounded border p-4">
-              <p className="font-semibold">{r.name}</p>
-              <p className="mt-1 text-base">{r.reason}</p>
+          {ready.map(({ e, p }) => (
+            <div key={e.program_id} className="rounded border p-4">
+              <p className="font-semibold">{p.name}</p>
+              <p className="mt-1 text-base">{e.reason}</p>
               <p className="mt-2 text-base font-semibold">Gather these:</p>
-              <ul className="list-disc pl-6 text-base">{r.documents.map((d) => <li key={d}>{d}</li>)}</ul>
-              <a className="mt-3 inline-block underline" href={`/api/packet/${r.program_id}`}>Download answers sheet (PDF)</a>
+              <ul className="list-disc pl-6 text-base">{p.documents.map((d) => <li key={d}>{d}</li>)}</ul>
+              <a className="mt-3 inline-block underline" href={`/api/packet/${e.program_id}`}>Download answers sheet (PDF)</a>
             </div>
           ))}
         </section>

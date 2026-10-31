@@ -1,12 +1,13 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont } from "pdf-lib";
-import type { Program, Result } from "./engine";
+import type { Program } from "./engine";
+import { isRecommended, type Evaluation } from "./review";
 
 type Member = { first_name: string; birth_year: number; veteran: boolean; disabled: boolean };
 type Household = { answers: Record<string, unknown>; county: string | null; city: string | null; reviewed_at: string | null };
 
-/** A packet is only for reviewer-approved, verified, likely-or-better programs. */
-export const packetAllowed = (h: Pick<Household, "reviewed_at">, r: Pick<Result, "status" | "confidence">) =>
-  !!h.reviewed_at && r.confidence === "verified" && (r.status === "eligible" || r.status === "likely");
+/** A packet is only for a recommendation a reviewer approved (and released by finishing the household review). */
+export const packetAllowed = (h: Pick<Household, "reviewed_at">, e: Pick<Evaluation, "review_state" | "status" | "override_status">) =>
+  !!h.reviewed_at && isRecommended(e);
 
 // Standard PDF fonts only cover WinAnsi; anything else would throw.
 const safe = (s: string) => s.replace(/[^\x20-\x7E -ÿ–—‘’“”•]/g, "?");
@@ -16,7 +17,7 @@ const usd = (v: unknown) => `$${n(v).toLocaleString("en-US")}`;
 const YESNO: Record<string, string> = { yes: "Yes", no: "No", unsure: "Not sure" };
 
 /** One-page-ish "answers sheet": our intake answers laid out for copying onto the agency's own form. We do not fill official forms (none verified yet). */
-export async function buildAnswersSheet(p: Program, r: Result, h: Household, members: Member[]) {
+export async function buildAnswersSheet(p: Program, reason: string, h: Household, members: Member[]) {
   const a = h.answers;
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica), bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -53,7 +54,7 @@ export async function buildAnswersSheet(p: Program, r: Result, h: Household, mem
   line("Copy these answers onto the application. Estimates only; not legal, tax, or financial advice. The agency makes the final decision.", { size: 9, color: [0.35, 0.35, 0.35], gap: 10 });
 
   line("Why we think you may qualify", { bold: true, size: 13 });
-  line(r.reason, { gap: 10 });
+  line(reason, { gap: 10 });
 
   line("People in the household", { bold: true, size: 13 });
   for (const m of members) row(m.first_name, `born ${m.birth_year}${m.veteran ? ", veteran" : ""}${m.disabled ? ", has a disability" : ""}`);
