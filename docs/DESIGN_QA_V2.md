@@ -6,7 +6,7 @@ v2 (this branch): alias `v2`, see the deploy URL in the chat.
 ## Worst-case contrast (`npx tsx scripts/contrast-v2.ts`, exits 1 if any text pair is under 7:1)
 Color pass 2 made the field richer (apricot `#FF9A52`, marigold `#F9B21C`, clay `#D4705F`, sage `#8FB08A`, sky `#8EC5E8`, plus an ember glow). Text tokens on the 86% white pane over each field color: the darkest case (deep teal, surface `#E0E9E9`) gives ink 14.4, ink-2 8.3, money green 9.0, waiting amber 8.3, problem red 8.2, link 7.8. Every other field color is higher. The tinted warm and sage panes (88% fill) are checked over teal too: lowest is link at 7.5. Button ink on the coral-to-marigold gradient: 7.7 and 9.8. The hero numeral is now `#5C1B04` (large text, needs 3:1): 4.0 to 11.9 on every field color. The weakest is clay at 3.9 (AA large). The figure also appears in the balance card at 9+.
 
-## Lighthouse (production build, run before color pass 2; not rerun, mobile profile, headless Chrome)
+## Lighthouse (before color pass 2, not rerun since; production build, mobile profile, headless Chrome)
 | Page | Performance | Accessibility | Best practices | LCP | CLS |
 |---|---|---|---|---|---|
 | `/` | 100 | 100 | 100 | 0.8s | 0 |
