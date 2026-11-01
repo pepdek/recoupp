@@ -20,3 +20,9 @@ Run October 31, 2026 on a production build (`next start`, port 3112), branch `de
 - Mobile: layout checked in the in-app browser at 390 wide for horizontal scroll (one overflow found and fixed on `/programs`). Headless screenshots in `docs/qa/` at 390 are cropped by Chrome's minimum window width, so only the 1495 shots are reliable. No Playwright run; 360, 768 and 1024 widths not run page by page. Pages checked at 1495 only by eye, not all.
 - Not tested: screen readers, a real older phone, 200% zoom on every page, email clients, a live Stripe payment. Checkout posts to the unchanged `/api/checkout` route; unit tests cover the webhook, not the new buttons end to end.
 - Homepage is about 6.4 screens at 900px tall including footer and sources (target 5 to 6).
+
+## Signed-in pages (second pass)
+
+Rebuilt with `u-` parts only: login, thanks, intake (start and steps), plan, track, documents (with the uploader), account, sponsor landing `/s/[slug]`, review queue and household, admin, kill criteria, sponsor dashboard. Review, admin and sponsor no longer sit on the v3 glass sheet. `tests/design-tokens.test.ts` now fails on any v3 class, Tailwind text-size utility or hex color in those files (19 files).
+
+Checked on the v4 draft: `/login` and `/thanks` at desktop and 390px (no sideways scroll, 8px control radius). Not checked: every page behind sign-in (intake, plan, track, documents, account, review, admin, sponsor), because it needs a real session and data. Open one of each as a signed-in household and as staff before relying on it.
