@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 // v4 consistency: sizes, radii and colors come from tokens only. Extended to every page as the rebuild lands.
@@ -20,5 +20,18 @@ describe("v4 tokens", () => {
   });
   it("has no hex colors outside :root", () => {
     expect(rest.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []).toEqual([]);
+  });
+});
+
+// Signed-in pages: u- parts only. No v3 classes, Tailwind size utilities, arbitrary sizes or hex colors.
+const files = ["login", "account", "thanks", "intake", "plan", "track", "documents", "review", "admin", "sponsor", "s"].flatMap((d) => readdirSync(`app/${d}`, { recursive: true }).map(String).filter((f) => f.endsWith(".tsx")).map((f) => `app/${d}/${f}`)).concat("components/Uploader.tsx");
+const V3 = /\b(btn|btn-quiet|btn-sm|ticket|slip|box|pill|glass|wrap|wrap-narrow|field|check|input|linkbtn|err|tbl|cheque|bar|strip|cell|display|bignum|perf|pad|sheet)\b/;
+describe("signed-in pages", () => {
+  it.each(files)("%s uses v4 parts only", (f) => {
+    const src = readFileSync(f, "utf8");
+    const classes = [...src.matchAll(/className=(?:"([^"]*)"|\{`([^`]*)`\})/g)].flatMap((m) => (m[1] ?? m[2]).split(/\s+/));
+    expect(classes.filter((c) => V3.test(c) && !c.startsWith("u-"))).toEqual([]);
+    expect(classes.filter((c) => /^!?text-(\[|xs|sm|base|lg|\d?xl)/.test(c))).toEqual([]);
+    expect(src.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []).toEqual([]);
   });
 });

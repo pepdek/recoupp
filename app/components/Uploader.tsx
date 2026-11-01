@@ -30,13 +30,13 @@ export default function Uploader({ householdId, kinds }: { householdId: string; 
   }
 
   return (
-    <form onSubmit={onSubmit} className="slip space-y-5">
-      <label className="field">What is it?
-        <select name="kind" className="input">{kinds.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+    <form onSubmit={onSubmit} className="u-card u-stack">
+      <label className="u-label">What is it?
+        <select name="kind" className="u-input">{kinds.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
       </label>
-      <input name="file" type="file" accept="application/pdf,image/jpeg,image/png" className="input" aria-label="Choose a file" />
-      <button disabled={busy} className="btn disabled:opacity-50">{busy ? "Uploading" : "Upload"}</button>
-      {msg && <p role="alert" className="err">{msg}</p>}
+      <input name="file" type="file" accept="application/pdf,image/jpeg,image/png" className="u-input" aria-label="Choose a file" />
+      <button disabled={busy} className="u-btn u-btn-primary">{busy ? "Uploading" : "Upload"}</button>
+      {msg && <p role="alert" className="u-error">{msg}</p>}
     </form>
   );
 }

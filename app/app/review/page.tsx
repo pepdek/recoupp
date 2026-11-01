@@ -23,23 +23,23 @@ export default async function Queue() {
   }).sort((a, b) => b.value - a.value || b.days - a.days);
 
   return (
-    <main className="wrap py-6">
-      <h1>Review queue</h1>
-      <p className="muted mt-1">{rows.length} waiting. Sorted by estimated yearly value, then age.</p>
-      <div className="mt-2"><QueueKeys /></div>
-      <table className="tbl mt-4">
-        <thead><tr><th>Household</th><th>Filled by</th><th className="num">Est. a year</th><th className="num">Waiting</th><th>State</th></tr></thead>
+    <main className="u-app">
+      <h1 className="u-title">Review queue</h1>
+      <p className="u-muted">{rows.length} waiting. Sorted by estimated yearly value, then age.</p>
+      <QueueKeys />
+      <div className="u-scroll"><table className="u-table">
+        <thead><tr><th>Household</th><th>Filled by</th><th className="n">Est. a year</th><th className="n">Waiting</th><th>State</th></tr></thead>
         <tbody>
           {rows.map(({ h, value, days, escalated: e }) => (
             <tr key={h.id}>
-              <td><Link data-row href={`/review/${h.id}`} className="font-bold">{h.city}, {h.county} County</Link></td>
-              <td>{h.relationship}</td><td className="num">~{$(value)}</td><td className="num">{days}d</td>
-              <td>{e ? <span className="pill pill-red">Escalated</span> : "New"}</td>
+              <td><Link data-row href={`/review/${h.id}`} >{h.city}, {h.county} County</Link></td>
+              <td>{h.relationship}</td><td className="n">~{$(value)}</td><td className="n">{days}d</td>
+              <td>{e ? <span className="u-badge u-badge-bad">Escalated</span> : "New"}</td>
             </tr>
           ))}
-          {!rows.length && <tr><td colSpan={5} className="muted">Nothing waiting.</td></tr>}
+          {!rows.length && <tr><td colSpan={5} className="u-muted">Nothing waiting.</td></tr>}
         </tbody>
-      </table>
+      </table></div>
     </main>
   );
 }

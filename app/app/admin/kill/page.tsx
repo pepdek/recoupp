@@ -3,15 +3,15 @@ import { killReport, ratesFromEnv, type KillMetrics, type Light } from "@/lib/ki
 import { requireAdmin } from "@/lib/admin";
 
 const pct = (v: number | null) => (v === null ? "no data" : `${Math.round(v * 100)}%`);
-const word: Record<Light, [string, string]> = { red: ["Failing", "pill-red"], green: ["Passing", "pill-green"], nodata: ["No data", ""] };
+const word: Record<Light, [string, string]> = { red: ["Failing", "u-badge-bad"], green: ["Passing", "u-badge-ok"], nodata: ["No data", "u-badge-quiet"] };
 
 function Card({ title, value, light, rule, children }: { title: string; value: string; light: Light; rule: string; children?: React.ReactNode }) {
   return (
-    <section className="ticket">
-      <h2 className="flex flex-wrap items-center gap-3">{title} <span className={`pill ${word[light][1]}`}>{word[light][0]}</span></h2>
-      <p className="mt-1">{value}</p>
-      <p className="text-sm muted">Kill if {rule}</p>
-      {children && <div className="mt-2 text-sm muted">{children}</div>}
+    <section className="u-card u-stack">
+      <h2 className="u-row" style={{ fontSize: "var(--fs-h3)" }}>{title} <span className={`u-badge ${word[light][1]}`}>{word[light][0]}</span></h2>
+      <p>{value}</p>
+      <p className="u-small u-muted">Kill if {rule}</p>
+      {children && <div className="u-small u-muted">{children}</div>}
     </section>
   );
 }
@@ -23,9 +23,9 @@ export default async function Kill() {
   const m = data as KillMetrics, rates = ratesFromEnv(), k = killReport(m, rates);
   const $ = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
   return (
-    <main className="wrap space-y-4 py-6">
-      <h1>Kill criteria</h1>
-      <p className="muted">Judge at day 90 with real volume; early numbers swing wildly. Red means the criterion is currently failing.</p>
+    <main className="u-app">
+      <h1 className="u-title">Kill criteria</h1>
+      <p className="u-muted">Judge at day 90 with real volume; early numbers swing wildly. Red means the criterion is currently failing.</p>
       <Card title="Claim completion" value={pct(k.completion.value)} light={k.completion.light} rule="under 30% of recommended claims are submitted or beyond">
         {m.claims_completed} of {k.completion.n} claims moved past "prepared".
       </Card>

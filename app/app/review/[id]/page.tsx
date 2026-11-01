@@ -9,7 +9,7 @@ import { addLedgerEntry, decideEvaluation, escalateHousehold, finishReview, setC
 
 const $ = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 const STATUS = ["recommended", "prepared", "submitted", "pending", "approved", "denied", "needs_info", "receiving", "renewal_due"];
-const cell = "cell";
+const cell = "u-input u-input-sm";
 
 export default async function ReviewHousehold({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> }) {
   const { id } = await params;
@@ -32,63 +32,63 @@ export default async function ReviewHousehold({ params, searchParams }: { params
   const a = h.answers as Record<string, unknown>;
 
   return (
-    <main className="wrap space-y-8 py-6">
+    <main className="u-app">
       <header>
-        <h1>{h.city}, {h.county} County</h1>
-        <p className="muted">Answered {h.relationship === "self" ? "by the household" : `by a ${h.relationship}`} · consent {consents?.map((c) => `${c.version} ${c.accepted_at.slice(0, 10)}`).join(", ")} · {h.reviewed_at ? `reviewed ${h.reviewed_at.slice(0, 10)}` : "awaiting review"}</p>
-        {error && <p className="mt-2 text-pill font-bold">That didn&apos;t work ({error}). {error === "outcome" && "Choose an outcome before approving a needs-review item."}</p>}
+        <h1 className="u-title">{h.city}, {h.county} County</h1>
+        <p className="u-muted">Answered {h.relationship === "self" ? "by the household" : `by a ${h.relationship}`} · consent {consents?.map((c) => `${c.version} ${c.accepted_at.slice(0, 10)}`).join(", ")} · {h.reviewed_at ? `reviewed ${h.reviewed_at.slice(0, 10)}` : "awaiting review"}</p>
+        {error && <p className="u-error">That didn&apos;t work ({error}). {error === "outcome" && "Choose an outcome before approving a needs-review item."}</p>}
       </header>
 
-      <section>
-        <h2>Household</h2>
-        <ul className="mt-2">{members?.map((m) => <li key={m.id}>{m.first_name}, born {m.birth_year}{m.veteran && " · veteran"}{m.disabled && " · disability"}</li>)}</ul>
-        <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm md:grid-cols-3">
-          {Object.entries(a).map(([k, v]) => <div key={k}><dt className="muted">{k}</dt><dd>{Array.isArray(v) ? v.join(", ") || "none" : String(v)}</dd></div>)}
+      <section className="u-stack">
+        <h2 style={{ fontSize: "var(--fs-h3)" }}>Household</h2>
+        <ul>{members?.map((m) => <li key={m.id}>{m.first_name}, born {m.birth_year}{m.veteran && " · veteran"}{m.disabled && " · disability"}</li>)}</ul>
+        <dl className="u-dl u-small">
+          {Object.entries(a).map(([k, v]) => <div key={k}><dt className="u-muted">{k}</dt><dd>{Array.isArray(v) ? v.join(", ") || "none" : String(v)}</dd></div>)}
         </dl>
       </section>
 
-      <section>
-        <h2>Documents</h2>
-        <ul className="mt-2 space-y-2 text-sm">
+      <section className="u-stack">
+        <h2 style={{ fontSize: "var(--fs-h3)" }}>Documents</h2>
+        <ul className="u-stack u-small" style={{ listStyle: "none", padding: 0 }}>
           {docs?.map((d) => {
             const f = confirmedFields(d.extracted as Proposed[]);
             return (
-              <li key={d.id} className="box">
-                {links[d.id] ? <a className="" href={links[d.id]} target="_blank" rel="noreferrer">{d.kind}: {d.filename}</a> : d.filename}
-                <span className="ml-2 muted">{d.extraction_status}</span>
-                {f.length > 0 && <div className="mt-1">Household-confirmed: {f.map((x) => `${x.field}=${x.value}`).join(" · ")}</div>}
+              <li key={d.id} className="u-card u-stack">
+                {links[d.id] ? <a href={links[d.id]} target="_blank" rel="noreferrer">{d.kind}: {d.filename}</a> : d.filename}
+                <span className="u-muted"> {d.extraction_status}</span>
+                {f.length > 0 && <div>Household-confirmed: {f.map((x) => `${x.field}=${x.value}`).join(" · ")}</div>}
               </li>
             );
           })}
-          {!docs?.length && <li className="muted">None uploaded.</li>}
+          {!docs?.length && <li className="u-muted">None uploaded.</li>}
         </ul>
       </section>
 
-      <section>
-        <h2>Engine decisions</h2>
+      <section className="u-stack">
+        <h2 style={{ fontSize: "var(--fs-h3)" }}>Engine decisions</h2>
         {!evaluations.length ? (
-          <form action={startReview} className="mt-2"><input type="hidden" name="household_id" value={id} /><button className="btn btn-sm">Start review (snapshot engine results)</button></form>
+          <form action={startReview}><input type="hidden" name="household_id" value={id} /><button className="u-btn u-btn-primary u-btn-sm">Start review (snapshot engine results)</button></form>
         ) : (
-          <ul className="mt-2 space-y-4">
+          <ul className="u-stack" style={{ listStyle: "none", padding: 0 }}>
             {evaluations.map((e) => {
               const p = programs.find((x) => x.id === e.program_id);
               const v = effectiveValue(e);
               return (
-                <li key={e.id} className="box">
-                  <div className="flex flex-wrap justify-between gap-2">
+                <li key={e.id} className="u-card u-stack">
+                  <div className="u-row" style={{ justifyContent: "space-between" }}>
                     <b>{p?.name ?? e.program_id}</b>
                     <span>engine: <b>{e.status}</b>{e.override_status && <> → reviewer: <b>{e.override_status}</b></>} · {e.review_state}{e.confidence !== "verified" && <span className="ml-1 font-bold">(unverified program)</span>}</span>
                   </div>
-                  <p className="mt-1">{e.reason}</p>
-                  <p className="text-sm muted">rule {e.rule_id} · v{e.program_version} · {v != null ? `${$(v)}/yr likely${e.value ? ` (${$(e.value.low)}–${$(e.value.high)})` : ""}` : "no verified value"}{p && <> · <a className="" href={p.source_urls[0]} target="_blank" rel="noreferrer">source</a> verified {p.last_verified}</>}</p>
+                  <p>{e.reason}</p>
+                  <p className="u-small u-muted">rule {e.rule_id} · v{e.program_version} · {v != null ? `${$(v)}/yr likely${e.value ? ` (${$(e.value.low)}–${$(e.value.high)})` : ""}` : "no verified value"}{p && <> · <a href={p.source_urls[0]} target="_blank" rel="noreferrer">source</a> verified {p.last_verified}</>}</p>
                   {!h.reviewed_at && (
-                    <form action={decideEvaluation} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                    <form action={decideEvaluation} className="u-row u-small">
                       <input type="hidden" name="id" value={e.id} /><input type="hidden" name="household_id" value={id} />
                       <select name="decision" defaultValue="approved" className={cell}><option value="approved">Approve</option><option value="rejected">Reject</option><option value="escalated">Escalate</option></select>
                       <select name="override_status" defaultValue={e.override_status ?? ""} className={cell}><option value="">Keep engine outcome</option><option value="eligible">Set eligible</option><option value="likely">Set likely</option><option value="unlikely">Set unlikely</option></select>
-                      <input name="override_value" placeholder="Yearly value $" defaultValue={e.override_value_likely ?? ""} className={`cell w-32`} />
-                      <input name="note" placeholder="Note" defaultValue={e.reviewer_note ?? ""} className={`cell min-w-48 flex-1`} />
-                      <button className="btn btn-quiet btn-sm">Save</button>
+                      <input name="override_value" placeholder="Yearly value $" defaultValue={e.override_value_likely ?? ""} className="u-input u-input-sm" style={{ width: "8rem" }} />
+                      <input name="note" placeholder="Note" defaultValue={e.reviewer_note ?? ""} className="u-input u-input-sm" style={{ flex: 1, minWidth: "12rem" }} />
+                      <button className="u-btn u-btn-secondary u-btn-sm">Save</button>
                     </form>
                   )}
                 </li>
@@ -99,47 +99,47 @@ export default async function ReviewHousehold({ params, searchParams }: { params
       </section>
 
       {!!evaluations.length && !h.reviewed_at && (
-        <section className="box">
-          <h2>Finish</h2>
-          <p className="text-sm muted">{undecided ? `${undecided} evaluation(s) still undecided.` : "All decided. Finishing releases the plan to the household and creates their claims."}</p>
-          <form className="mt-2 space-y-2">
+        <section className="u-card u-stack">
+          <h2 style={{ fontSize: "var(--fs-h3)" }}>Finish</h2>
+          <p className="u-small u-muted">{undecided ? `${undecided} evaluation(s) still undecided.` : "All decided. Finishing releases the plan to the household and creates their claims."}</p>
+          <form className="u-stack">
             <input type="hidden" name="household_id" value={id} /><Timer />
-            <textarea name="notes" placeholder="Household notes" className={`cell w-full`} />
-            <div className="flex gap-2">
-              <button formAction={finishReview} disabled={!!undecided} className="btn btn-sm disabled:opacity-40">Approve and release</button>
-              <button formAction={escalateHousehold} className="btn btn-quiet btn-sm">Log escalation and leave</button>
+            <textarea name="notes" placeholder="Household notes" className="u-input" />
+            <div className="u-row">
+              <button formAction={finishReview} disabled={!!undecided} className="u-btn u-btn-primary u-btn-sm">Approve and release</button>
+              <button formAction={escalateHousehold} className="u-btn u-btn-secondary u-btn-sm">Log escalation and leave</button>
             </div>
           </form>
         </section>
       )}
 
       {h.reviewed_at && (
-        <section>
-          <h2>Claims and outcome ledger</h2>
-          <ul className="mt-2 space-y-4">
+        <section className="u-stack">
+          <h2 style={{ fontSize: "var(--fs-h3)" }}>Claims and outcome ledger</h2>
+          <ul className="u-stack" style={{ listStyle: "none", padding: 0 }}>
             {claims?.map((c) => {
               const entries = (ledger ?? []).filter((l) => l.claim_id === c.id);
               return (
-                <li key={c.id} className="box">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
+                <li key={c.id} className="u-card u-stack">
+                  <div className="u-row" style={{ justifyContent: "space-between" }}>
                     <b>{programs.find((p) => p.id === c.program_id)?.name ?? c.program_id}</b>
-                    <span className="text-sm">verified: <b>{verified.has(c.id) ? `${$(verified.get(c.id)!)}/yr` : "none yet"}</b></span>
+                    <span className="u-small">verified: <b>{verified.has(c.id) ? `${$(verified.get(c.id)!)}/yr` : "none yet"}</b></span>
                   </div>
-                  <form action={setClaimStatus} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                  <form action={setClaimStatus} className="u-row u-small">
                     <input type="hidden" name="claim_id" value={c.id} /><input type="hidden" name="household_id" value={id} />
                     <select name="status" defaultValue={c.status} className={cell}>{STATUS.map((s) => <option key={s}>{s}</option>)}</select>
                     <label>Renewal due <input type="date" name="renewal_due" defaultValue={c.renewal_due ?? ""} className={cell} /></label>
-                    <button className="btn btn-quiet btn-sm">Update status</button>
+                    <button className="u-btn u-btn-secondary u-btn-sm">Update status</button>
                   </form>
-                  <ul className="mt-2 text-sm muted">{entries.map((l) => <li key={l.id}>{l.created_at.slice(0, 10)} · {l.kind} · {$(l.annual_value)}/yr{l.verified_basis && ` · ${l.verified_basis}`}{l.note && ` · ${l.note}`}</li>)}</ul>
-                  <form action={addLedgerEntry} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                  <ul className="u-small u-muted">{entries.map((l) => <li key={l.id}>{l.created_at.slice(0, 10)} · {l.kind} · {$(l.annual_value)}/yr{l.verified_basis && ` · ${l.verified_basis}`}{l.note && ` · ${l.note}`}</li>)}</ul>
+                  <form action={addLedgerEntry} className="u-row u-small">
                     <input type="hidden" name="claim_id" value={c.id} /><input type="hidden" name="household_id" value={id} />
                     <select name="kind" className={cell}><option value="approved">Approved (determination letter)</option><option value="received">Received (confirmed receipt)</option></select>
-                    <input name="annual_value" type="number" step="any" min="0" required placeholder="Yearly value $" className={`cell w-36`} />
+                    <input name="annual_value" type="number" step="any" min="0" required placeholder="Yearly value $" className="u-input u-input-sm" style={{ width: "9rem" }} />
                     <input name="effective_date" type="date" className={cell} />
                     <select name="evidence_document_id" required className={cell}><option value="">Evidence document…</option>{docs?.map((d) => <option key={d.id} value={d.id}>{d.kind}: {d.filename}</option>)}</select>
-                    <input name="note" placeholder="Note" className={`cell min-w-40 flex-1`} />
-                    <button className="btn btn-quiet btn-sm">Add verified entry</button>
+                    <input name="note" placeholder="Note" className="u-input u-input-sm" style={{ flex: 1, minWidth: "10rem" }} />
+                    <button className="u-btn u-btn-secondary u-btn-sm">Add verified entry</button>
                   </form>
                 </li>
               );

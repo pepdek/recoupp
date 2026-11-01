@@ -189,3 +189,12 @@ select.u-input { appearance: none; padding-right: var(--sp-6); background: var(-
 .ph { background: var(--wait-tint); border-bottom-color: var(--wait); }
 .wrap-narrow { width: min(100% - 2rem, 44rem); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* Signed-in pages (u- parts only) */
+.u-app { padding-block: var(--sp-5) var(--sp-8); } .u-app > * + * { margin-top: var(--sp-3); }
+.u-linkbtn { background: none; border: 0; padding: 0; min-height: 2.75rem; font: inherit; color: var(--brand); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; } .u-linkbtn:hover { color: var(--brand-deep); }
+.u-input-sm { width: auto; max-width: 100%; min-height: 2.75rem; font-size: var(--fs-small); }
+.u-dl { display: grid; gap: var(--sp-1) var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); } .u-dl dt { color: var(--ink-2); font-size: var(--fs-small); } .u-dl dd { margin: 0; }
+.u-scroll { overflow-x: auto; }
+.u-scroll .u-table { min-width: 36rem; }
+@media (max-width: 639px) { .u-scroll .u-table { display: table; } .u-scroll .u-table tbody { display: table-row-group; } .u-scroll .u-table tr { display: table-row; } .u-scroll .u-table td { display: table-cell; padding: var(--sp-2); border-bottom: 1px solid var(--border); } .u-scroll .u-table thead { position: static; left: auto; } }

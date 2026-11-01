@@ -10,47 +10,47 @@ export default async function Intake({ searchParams }: { searchParams: Promise<{
   if (household?.status === "in_progress") redirect(`/intake/${household.step}`);
   if (household) {
     return (
-      <main className="wrap-narrow py-10">
-        <h1>You're done with the questions</h1>
-        <p className="mt-4">A reviewer is checking your answers. We'll email you when your plan is ready.</p>
-        <div className="mt-6 flex flex-wrap gap-4">
-          <Link className="btn" href="/plan">See my plan</Link>
-          <Link className="btn btn-quiet" href="/documents">Add documents</Link>
+      <main className="u-wrap-narrow u-app">
+        <h1 className="u-title">You're done with the questions</h1>
+        <p>A reviewer is checking your answers. We'll email you when your plan is ready.</p>
+        <div className="u-row">
+          <Link className="u-btn u-btn-primary" href="/plan">See my plan</Link>
+          <Link className="u-btn u-btn-secondary" href="/documents">Add documents</Link>
         </div>
-        <p className="mt-6"><Link href="/account">Download or delete my data</Link></p>
+        <p><Link href="/account">Download or delete my data</Link></p>
       </main>
     );
   }
   return (
-    <main className="wrap-narrow py-10">
-      <h1>Before we start</h1>
-      {sponsor && <p className="mt-3 font-bold">You're signing up through {sponsor.name}.</p>}
-      <dl className="slip mt-6 space-y-4">
-        <div><dt className="font-bold">What we ask</dt><dd>Who lives at home and their ages, income, savings, housing and bills, health coverage, and help you already get. Never your Social Security number.</dd></div>
-        <div><dt className="font-bold">Why</dt><dd>To check which programs you may qualify for and fill in your paperwork.</dd></div>
-        <div><dt className="font-bold">Who sees it</dt><dd>You and our review team. No one else, unless you say so.</dd></div>
-        <div><dt className="font-bold">Delete it</dt><dd>Any time, from your account page. You can download a copy too.</dd></div>
+    <main className="u-wrap-narrow u-app">
+      <h1 className="u-title">Before we start</h1>
+      {sponsor && <p><b>You're signing up through {sponsor.name}.</b></p>}
+      <dl className="u-card u-stack">
+        <div><dt style={{ fontWeight: 600 }}>What we ask</dt><dd>Who lives at home and their ages, income, savings, housing and bills, health coverage, and help you already get. Never your Social Security number.</dd></div>
+        <div><dt style={{ fontWeight: 600 }}>Why</dt><dd>To check which programs you may qualify for and fill in your paperwork.</dd></div>
+        <div><dt style={{ fontWeight: 600 }}>Who sees it</dt><dd>You and our review team. No one else, unless you say so.</dd></div>
+        <div><dt style={{ fontWeight: 600 }}>Delete it</dt><dd>Any time, from your account page. You can download a copy too.</dd></div>
       </dl>
-      <form action={startIntake} className="mt-8 space-y-6">
+      <form action={startIntake} className="u-stack">
         <input type="hidden" name="org" value={sponsor ? org : ""} />
-        <label className="field">Who is filling this out?
-          <select name="relationship" className="input" defaultValue="self">
+        <label className="u-label">Who is filling this out?
+          <select name="relationship" className="u-input" defaultValue="self">
             <option value="self">Me, for myself</option>
             <option value="family">A family member helping</option>
             <option value="caseworker">A caseworker helping</option>
             <option value="other">Someone else</option>
           </select>
         </label>
-        <label className="check items-start"><input type="checkbox" name="consent" className="mt-1" />
+        <label className="u-choice"><input type="checkbox" name="consent" />
           <span>I agree to the above. I want you to use my answers to check which programs I may qualify for. If I'm helping someone, they asked me to.</span>
         </label>
         {sponsor && (
-          <label className="check items-start"><input type="checkbox" name="share" className="mt-1" />
+          <label className="u-choice"><input type="checkbox" name="share" />
             <span>Optional: let {sponsor.name} see my own results. Leave this empty and they see only combined totals.</span>
           </label>
         )}
-        {error && <p role="alert" className="err">Please tick the first box to go on.</p>}
-        <button className="btn">Go on</button>
+        {error && <p role="alert" className="u-error">Please tick the first box to go on.</p>}
+        <button className="u-btn u-btn-primary">Go on</button>
       </form>
     </main>
   );

@@ -12,17 +12,17 @@ export default function Login() {
     setSent(true);
   }
   return (
-    <main className="wrap-narrow py-10">
-      <h1>Sign in</h1>
+    <main className="u-wrap-narrow u-app">
+      <h1 className="u-title">Sign in</h1>
       {sent ? (
-        <div className="ticket mt-6"><p className="font-bold">Check your email.</p><p>We sent you a link. Open it on this device. No password needed.</p></div>
+        <div className="u-alert u-alert-ok" role="status"><div><b>Check your email.</b><p>We sent you a link. Open it on this device. No password needed.</p></div></div>
       ) : (
-        <form onSubmit={submit} className="mt-6 space-y-5">
-          <label className="field">Your email
-            <span className="hint">We'll send you a one-time link.</span>
-            <input name="email" type="email" required autoComplete="email" className="input" />
+        <form onSubmit={submit} className="u-stack">
+          <label className="u-label">Your email
+            <span className="u-hint">We'll send you a one-time link.</span>
+            <input name="email" type="email" required autoComplete="email" className="u-input" />
           </label>
-          <button className="btn">Email me the link</button>
+          <button className="u-btn u-btn-primary">Email me the link</button>
         </form>
       )}
     </main>

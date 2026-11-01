@@ -14,5 +14,5 @@ export default function QueueKeys() {
     addEventListener("keydown", on);
     return () => removeEventListener("keydown", on);
   }, []);
-  return <p className="small muted">Keys: <kbd>j</kbd> next · <kbd>k</kbd> previous · <kbd>Enter</kbd> open</p>;
+  return <p className="u-small u-muted">Keys: <kbd>j</kbd> next · <kbd>k</kbd> previous · <kbd>Enter</kbd> open</p>;
 }

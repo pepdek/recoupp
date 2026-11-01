@@ -156,3 +156,23 @@ export function SponsorCard() {
       <Link className="u-btn u-btn-secondary" href="/for-sponsors">See the pilot</Link></div>
   );
 }
+
+const CLAIM4: Record<string, [string, string, keyof typeof TONE]> = {
+  recommended: ["Ready to apply", "arrow", "info"], prepared: ["Prepared", "pencil", "info"], submitted: ["Submitted", "envelope", "info"], pending: ["Waiting", "clock", "wait"],
+  approved: ["Approved", "check", "ok"], denied: ["Denied", "x", "bad"], needs_info: ["Needs info", "alert", "bad"], receiving: ["Receiving", "check", "ok"], renewal_due: ["Renewal due", "calendar", "wait"],
+};
+/** Claim status badge: icon + word + tint. */
+export function Claim({ status }: { status: string }) {
+  const [t, i, tone] = CLAIM4[status] ?? [status, "check", "quiet"];
+  return <span className={`u-badge ${TONE[tone]}`}><Icon name={i} size={16} />{t}</span>;
+}
+
+/** Step progress for the questionnaire. `current` is 1-based. */
+export function Steps4({ total, current }: { total: number; current: number }) {
+  return (
+    <div>
+      <p className="u-small u-muted">Step {current} of {total}</p>
+      <div className="u-progress" role="progressbar" aria-label="Progress" aria-valuemin={1} aria-valuemax={total} aria-valuenow={current}><i style={{ width: `${(current / total) * 100}%` }} /></div>
+    </div>
+  );
+}
